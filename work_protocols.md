@@ -19,7 +19,7 @@
 
 - Version branches will be merged into the master branch once team-integration testing is complete.
 
-- Branch-Naming Schema:
+### Branch-Naming Schema:
   - \<Release Version>.\<Sub-Version>.\<Development Stage>\[-\<Team>\[_\<Team member>]]
     - Elements with < > are required within their scope
     - Elements with [ ] are optional within their scope
@@ -42,10 +42,3 @@
 - GitMaster will also be running the build/test servers and will be responsible for integration testing, working with teams to establish guidelines and goals for testing.
 
 - GitMaster will also be able to work with the individuals/teams to help with implementation/design/integration/testing
-
-
-
-
-
-  
-
