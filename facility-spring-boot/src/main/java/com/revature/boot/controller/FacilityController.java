@@ -1,0 +1,62 @@
+package com.revature.boot.controller;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.revature.boot.domain.Facility;
+import com.revature.boot.service.FacilityService;
+
+@RestController
+@RequestMapping("/facilities")
+public class FacilityController {
+	@Autowired
+	FacilityService facilityService;
+	
+	@GetMapping
+	public List<Facility> getAll() {
+		return facilityService.getAllFacilities();
+	}
+	
+	@GetMapping
+	public List<Facility> getFacilityByName(String name){
+		return facilityService.getFacilityByName(name);
+	}
+	
+	@PostMapping
+	public Facility add(@RequestBody @Valid Facility a, Errors errors) {
+		if(errors.hasErrors()) return null;
+		return facilityService.saveNewFacility(a);
+	}
+	
+	@DeleteMapping("/{id}")
+	public String deleteById(@PathVariable("id") Long id) {
+		facilityService.deleteById(id);
+		return "deleted!";
+	}
+	
+	@GetMapping("/oops")
+	public void oops() throws IOException {
+		throw new IOException();
+	}
+	
+	@ExceptionHandler(IOException.class)
+	@ResponseStatus(value=HttpStatus.I_AM_A_TEAPOT)
+	public String ioProblem() {
+		return "oops!";
+	}
+}
