@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                        https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.revature.texas-mule.project-2</groupId>
+    <artifactId>field-trip-generator</artifactId>
+    <version>0.0.0</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    
+    <modules>
+        <!-- <module>event-app/pom.xml</module>             -->
+        <!-- <module>food-app/pom.xml</module>              -->
+        <!-- <module>transportation-app/pom.xml</module>    -->
+        <!-- <module>mule-app/pom.xml</module>              -->
+    </modules>
+    
+</project>
