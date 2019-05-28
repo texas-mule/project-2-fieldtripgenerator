@@ -31,7 +31,6 @@ public class VehiclesTest {
 
 	@Test
 	public void testGetId() {
-		fail("Not yet implemented.");
 		assertEquals(12, v.getId());
 	}
 
