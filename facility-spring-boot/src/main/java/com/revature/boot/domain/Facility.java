@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +16,39 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "facilities")
+@NamedQueries({
+		@NamedQuery(name = "searchFacilityByName", 
+					query = "from Facility where LOWER(name) LIKE LOWER(CONCAT('%',:name, '%'))"),
+		@NamedQuery(name = "searchFeature",
+					query = "from Facility where lower(description) like lower(concat('%', :feat, '%'))"),
+		@NamedQuery(name = "search",
+					query = "from Facility where (LOWER(name) LIKE LOWER(CONCAT('%',:feat, '%'))) or (lower(description) like lower(concat('%', :feat, '%')))"),
+		@NamedQuery(name = "getContactInfoByName",
+					query = "select f.visiting_info from Facility as f where f.name = :name")
+		})
 public class Facility {
+	@Id
+	private Long id;
+	@Column(name = "description")
+	private String description;
+	@Column(name = "address")
+	private String address;
+	@Column(name = "city")
+	private String city;
+	@Pattern(regexp = "[A-Z]+")
+	@Column(name = "state")
+	private String state;
+	@Column(name = "zip", length = 2)
+	private int zip;
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "visit_id")
+	private Information visiting_info;
+	@Pattern(regexp = "[a-zA-Z]+")
+	@javax.validation.constraints.Size(min = 2, max = 45)
+	@NotBlank
+	@Column(name = "facility_name")
+	private String name;
+
 	public Facility(Long id, String description, String address, String city, @Pattern(regexp = "[A-Z]+") String state,
 			int zip, Information visiting_info,
 			@Pattern(regexp = "[a-zA-Z]+") @Size(min = 2, max = 45) @NotBlank String name) {
@@ -28,24 +62,6 @@ public class Facility {
 		this.visiting_info = visiting_info;
 		this.name = name;
 	}
-
-	@Id private Long id;
-	@Column(name="description") private String description;
-	@Column(name="address") private String address;
-	@Column(name="city") private String city;
-	@Pattern(regexp="[A-Z]+")
-	@Column(name="state") private String state;
-	@Column(name="zip", length=2) private int zip;
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "visit_id")
-	private Information visiting_info;
-	
-	@Pattern(regexp="[a-zA-Z]+")
-	@javax.validation.constraints.Size(min=2, max=45)
-	@NotBlank
-	@Column(name="facility_name")
-	private String name;
-
 
 	@Override
 	public String toString() {

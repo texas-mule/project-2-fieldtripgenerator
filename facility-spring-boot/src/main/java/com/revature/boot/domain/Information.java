@@ -3,12 +3,17 @@ package com.revature.boot.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "information")
+@NamedQueries({
+	@NamedQuery(name = "getAllInfo", query = "from Information")
+})
 public class Information {
 	@Id private int id;
 	@Column(name="hours") private String hours;

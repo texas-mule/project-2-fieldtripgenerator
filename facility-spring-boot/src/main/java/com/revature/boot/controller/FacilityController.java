@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.boot.domain.Facility;
+import com.revature.boot.domain.Information;
 import com.revature.boot.service.FacilityService;
+import com.revature.boot.service.InformationService;
 
 @RestController
 @RequestMapping("/facilities")
@@ -27,14 +29,42 @@ public class FacilityController {
 	@Autowired
 	FacilityService facilityService;
 	
+	@Autowired
+	InformationService informationService;
+	
 	@GetMapping
 	public List<Facility> getAll() {
 		return facilityService.getAllFacilities();
 	}
 	
-	@GetMapping
-	public List<Facility> getFacilityByName(String name){
+	@GetMapping("/{name}")
+	public Facility getFacilityByName(@PathVariable("name") String name){
 		return facilityService.getFacilityByName(name);
+	}
+	
+	@GetMapping("/contact")
+	public List<Information> getAllInfo(){
+		return informationService.getAllInfo();
+	}
+	
+	@GetMapping("/contact/{name}")
+	public Information getContactInfoByName(@PathVariable("name") String name) {
+		return facilityService.getContactInfoByName(name);
+	}
+	
+	@GetMapping("/search/name/{name}")
+	public List<Facility> searchFacilityByName(@PathVariable("name") String name){
+		return facilityService.searchFacilityByName(name);
+	}
+	
+	@GetMapping("/search/feature/{feat}")
+	public List<Facility> searchFeature(@PathVariable("feat") String feature){
+		return facilityService.searchFeature(feature);
+	}
+	
+	@GetMapping("/search/{feat}")
+	public List<Facility> search(@PathVariable("feat") String feature){
+		return facilityService.search(feature);
 	}
 	
 	@PostMapping
