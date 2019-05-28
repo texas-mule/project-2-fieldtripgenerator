@@ -6,10 +6,11 @@
     <artifactId>field-trip-generator</artifactId>
     <version>0.0.0</version>
     <packaging>pom</packaging>
-
+    
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     
     <modules>
@@ -18,5 +19,14 @@
         <!-- <module>transportation-app/pom.xml</module>    -->
         <!-- <module>mule-app/pom.xml</module>              -->
     </modules>
+    
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     
 </project>
