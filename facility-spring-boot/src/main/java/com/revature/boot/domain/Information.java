@@ -1,30 +1,44 @@
 package com.revature.boot.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import com.revature.boot.domain.Admission;
 
 @Entity
 @Table(name = "information")
 @NamedQueries({
-	@NamedQuery(name = "getAllInfo", query = "from Information")
+	@NamedQuery(name = "getAllInfo", query = "from Information"),
+	@NamedQuery(name = "getAllPhones", query = "select i.phone_num from Information as i"),
+	@NamedQuery(name = "getAllWebsites", query = "select i.web_site from Information as i"),
+	@NamedQuery(name = "getAllAdmissions", query = "select i.admission from Information as i"),
+	@NamedQuery(name = "getAllHours", query = "select i.hours from Information as i"),
 })
 public class Information {
-	@Id private int id;
-	@Column(name="hours") private String hours;
-	@Column(name="admission") private String admission;
+	@Id 
+	private int id;
+	@Column(name="hours") 
+	private String hours;
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="admission") 
+	private Admission admission;
 	@Column(name="telephone_num", length=10)
 	@NotBlank 
 	@Pattern(regexp="[0-9]+")
 	private long phone_num;
-	@Column(name="website")	private String web_site;
+	@Column(name="website")	
+	private String web_site;
 	
-	public Information(int id, String hours, String admission, @NotBlank @Pattern(regexp = "[0-9]+") long phone_num,
+	public Information(int id, String hours, Admission admission, @NotBlank @Pattern(regexp = "[0-9]+") long phone_num,
 			String web_site) {
 		super();
 		this.id = id;
@@ -60,11 +74,11 @@ public class Information {
 		this.hours = hours;
 	}
 
-	public String getAdmission() {
+	public Admission getAdmission() {
 		return admission;
 	}
 
-	public void setAdmission(String admission) {
+	public void setAdmission(Admission admission) {
 		this.admission = admission;
 	}
 

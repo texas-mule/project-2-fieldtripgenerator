@@ -66,6 +66,14 @@ public class FacilityController {
 	public List<Facility> search(@PathVariable("feat") String feature){
 		return facilityService.search(feature);
 	}
+	@GetMapping("/price/child/{facilityName}")
+	public double getChildPrice(@PathVariable("facilityName") String name){
+		return facilityService.getChildPrice(name);
+	}
+	@GetMapping("/price/adult/{facilityName}")
+	public double getAdultPrice(@PathVariable("facilityName") String name){
+		return facilityService.getAdultPrice(name);
+	}
 	
 	@PostMapping
 	public Facility add(@RequestBody @Valid Facility a, Errors errors) {
@@ -78,6 +86,45 @@ public class FacilityController {
 		facilityService.deleteById(id);
 		return "deleted!";
 	}
+	
+	@GetMapping("/address/full/{name}")
+	public String getFullAddress(@PathVariable("name") String name) {
+		return facilityService.getFullAddress(name);
+	}
+	
+	@GetMapping("/address/{name}")
+	public String getAddress(@PathVariable("name") String name) {
+		return facilityService.getAddress(name);
+	}
+	@GetMapping("/city/{name}")
+	public String getCity(@PathVariable("name") String name) {
+		return facilityService.getCity(name);
+	}
+	@GetMapping("/state/{name}")
+	public String getState(@PathVariable("name") String name) {
+		return facilityService.getState(name);
+	}
+	@GetMapping("/zip/{name}")
+	public String getZip(@PathVariable("name") String name) {
+		return facilityService.getZip(name);
+	}
+	
+	@GetMapping("/phone/{name}")
+	public long getPhone(@PathVariable("name") String name) {
+		return facilityService.getPhone(name);
+	}
+	
+	@GetMapping("/website/{name}")
+	public String getWebsite(@PathVariable("name") String name) {
+		return facilityService.getWebsite(name);
+	}
+//	
+//	@PutMapping("/name/{}")
+//	@PutMapping("/description/{}")
+//	@PutMapping("/address/{}")
+//	@PutMapping("/city/{}")
+//	@PutMapping("/state/{}")
+//	@PutMapping("/zip/{}")
 	
 	@GetMapping("/oops")
 	public void oops() throws IOException {

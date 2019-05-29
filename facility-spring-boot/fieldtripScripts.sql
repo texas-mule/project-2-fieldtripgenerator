@@ -1,106 +1,212 @@
--- Table: public."information"
+-- Table: public.admissions
 
--- DROP TABLE public."information";
+-- DROP TABLE public.admissions;
 
-CREATE TABLE public."information"
+CREATE TABLE public.admissions
 (
     id integer NOT NULL,
-    hours text COLLATE pg_catalog."default",
-    admission text COLLATE pg_catalog."default",
-    telephone_num bigint,
-    website text COLLATE pg_catalog."default",
-    CONSTRAINT "information_pkey" PRIMARY KEY (id)
+    baby_age text COLLATE pg_catalog."default" DEFAULT 'age 0 - 3'::text,
+    child_age text COLLATE pg_catalog."default" DEFAULT 'age 4 - 17'::text,
+    adult_age text COLLATE pg_catalog."default" DEFAULT '18 and Up'::text,
+    senior_age text COLLATE pg_catalog."default" DEFAULT '65+'::text,
+    baby_price money DEFAULT 0.00,
+    child_price money DEFAULT 5.00,
+    adult_price money DEFAULT 10.00,
+    senior_price money DEFAULT 8.00,
+    vet_price money DEFAULT 8.00,
+    details text COLLATE pg_catalog."default" DEFAULT 'See Website'::text,
+    CONSTRAINT admissions_pkey PRIMARY KEY (id)
 )
 WITH (
     OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public."information"
+ALTER TABLE public.admissions
     OWNER to postgres;
 
 
 
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (1, 'Schedule varies with the seasons. See website for all the details.', 'Adults $5.00; Seniors, Students, Children $4.00; UT Arlington Faculty, Staff & Alumni (with ID) $3.00; UT Arlington Students (with ID) $2.00; GROUPS of 10 or more (with reservation) $3.00', 8172721183, 'http://www.uta.edu/planetarium/');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (2, 'See Website', 'See Website', 2145156500, 'http://www.dallasarboretum.org/');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (3, '9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day', '$8.75 Adults (age 12-64); $5.75 Children (age 3-11); $5.00 Seniors (age 65 up); FREE Children (age 2 and under); FREE Members of the Dallas Zoological Society', 2146705656, 'http://www.dallas-zoo.org/');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (4, 'April 1 - October 22: 10 a.m. to 5 p.m. Weekdays; 10 a.m. to 6 p.m. Weekends', 'Adults (13+) $10.50; Children (3-12) $8.00; Toddlers (2 & under) Free; Seniors (65+) $7.00; Wednesdays are half-price admission days!; Parking $5 per vehicle daily; cash only', 8177597500, 'http://www.fortworthzoo.com/');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (5, 'Check the website for various events and times.', 'General Admission (Combo) Price with Regular Omni: 1 Omni Film, 1 Planetarium Show and all Museum Exhibits: Adult: $14.00, Child/Senior: $12.00; Individual Ticket Prices Omni Theater: Adult: $7.00 Child/Senior: $6.00; Noble Planetarium: Adult: $3.50 Child/Senior $3.50; Museum Exhibit: Adult: $8.00 Child/Senior: $7.00; "Child" is children ages 3-12; "Seniors" are adults 60+', 8172559300, 'http://www.fortworthmuseum.org');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (6, 'Aquarium / Rainforest / Gift Shop Open 7 Days A Week, 10am - 5pm (Closed Thanksgiving & Christmas); Cafe Maya Restaurant 11:30am - 2:30pm; "Eighteen-O-One" Restaurant 11:30am - 2:30pm; Jungle Cafe 11am - 4pm', 'Adults - $15.95; Children (3-12 Years) - $8.95; Seniors (60 & Older) - $12.95; Children (2 & Under) - No Charge', 2147202224, 'http://www.dwazoo.com');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (7, 'Monday-Saturday: 10am to 5pm; Sunday: 1pm to 5pm; Always check website for changes/exceptions.', 'Adults: $8, Seniors(65plus): $6, Youth/Students (3-17): $5, Children under 3 FREE!', 2143503600, 'http://www.flightmuseum.com');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (8, 'Wed: 9AM-4PM; Sat: 9AM-5PM; Sun: 11AM-5PM', 'Adults: $5.00; Youth 6-16: $1.00; Under 6: Free; Families: $10.00; Active Duty Military & Family: Free', 8557338627, 'http://fortworthaviationmuseum.com/');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (9, 'Mon-Fri: 10 am - 5 pm; Sat-Sun: 10 am - 5 pm; Final admission is sold at 4:45 pm.; Closed New Year''s Day, Thanksgiving Day, and Christmas Eve and Day.', '$8 Adults; $4 Children', 2144287476, 'http://texasdiscoverygardens.org/');
-INSERT INTO public."information"(
-	id, hours, admission, telephone_num, website)
-	VALUES (10, 'February-July, September-December:Tuesday - Saturday: 10 AM to 4 PM; Sunday: Noon to 4 PM; Monday: Closed to the public; Closed August and January, as well as Thanksgiving Day, Christmas Eve, Christmas Day, New Year''s Eve and New Year''s Day.', '$7 Adult; $5 Senior; $4 child (4-12 years)', 2144285448, 'http://www.dallasheritagevillage.org/');
+
+INSERT INTO public.admissions(
+	id, child_price, adult_price, senior_price, vet_price)
+	VALUES (1, 4.00, 5.00, 4.00, 3.00);
+INSERT INTO public.admissions(id, details)
+	VALUES (2,'School Groups: Special pricing, see website; Book at least 1 week in advance');
+INSERT INTO public.admissions(
+	id, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (3, 'age 2 and under', 'age 3-11', 'age 12-64', 'age 65 and up', 0.00, 5.75, 8.75, 5.00, 5.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (4, 'See Website','age 2 and under', 'age 3-12', 'age 13+', 'age 65+', 0.00, 8.00, 10.50, 7.00, 7.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (5, 'See Website','age 2 and under', 'age 3-12', 'age 13+', 'age 60+', 0.00, 12.00, 14.00, 12.00, 12.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (6, 'See Website','age 6 and under', 'age 6-17', 'age 18+', 'age 65+', 0.00, 5.00, 8.00, 6.00, 0.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (7, 'See Website','age 2 and under', 'age 3-12', 'age 13+', 'age 65+', 0.00, 4.00, 8.00, 4.00, 4.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (8, 'See Website','age 3 and under', 'age 4-12', 'age 13+', 'age 65+', 0.00, 4.00, 7.00, 5.00, 5.00);
+INSERT INTO public.admissions(
+	id, details,  baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (9, 'See Website',0.00, 0.00, 0.00, 0.00, 0.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (10, 'See Website','age under 2', 'age 2-17', 'age 18+', 'age 65+', 0.00, 3.50, 5.50, 4.00, 4.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (11, 'Special Tour Prices available: see website','age under 2', 'age 2-12', 'age 13+', 'age 65+', 0.00, 6.00, 8.00, 6.00, 6.00);
+
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (13, 'Train Ticket (ages 2 and up) $2.50','age 2 and under', 'age 3-12', 'age 13+', 'age 65+', 0.00, 4.00, 7.00, 5.00, 5.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (14, 'See Website','age 2 and under', 'age 3-12', 'age 13+', 'age 61+', 0.00, 1.00, 2.00, 1.00, 1.00);	
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price)
+	VALUES (15, 'Other options and discounts available: see website','age 3 and under', 'age 4-12', 'age 13+', 'age 65+', 0.00, 8.95, 16.95);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (16, 'School Groups: Special Pricing, See Website','age 2 and under', 'age 3-12', 'age 13+', 'age 65+', 0.00, 67.99, 82.99, 67.99, 67.99);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (17, 'See Website','age 2 and under', 'age 3-12', 'age 13+', 'age 65+', 0.00, 12.00, 59.99, 59.99, 59.99);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (18, '1 Free teacher per 10 students; General Admission: child = 11, adult = 17, special needs guests = free; See Website for more','age 2 and under', 'age 3-17', 'age 18+', 'age 62+', 0.00, 9.00, 9.00, 11.00, 11.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (19, '1-hour pass: $12; 2-hour pass: $22; All-Day Pass: $30; Toddler Tumble: $8','age under 6 months', 'age 6 months - 6 years', 'age 6+', 'age 65+', 0.00, 8.00, 30.00, 30.00, 30.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (20, 'See Website','age 1 and under', 'age 1-12', 'age 13+', 'age 65+', 0.00, 8.00, 8.50, 8.00, 8.00);
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (21, 'See Website','age under 3', 'age 3-17', 'age 18+', 'age 65+', 2.00, 2.00, 2.00, 2.00, 2.00);
+
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (12, 'See Website','age under 6', 'age 6-16', 'age 17+', 'age 65+', 0.00, 1.00, 5.00, 5.00, 0.00);
+
+INSERT INTO public.admissions(
+	id, details, baby_age, child_age, adult_age, senior_age, baby_price, child_price, adult_price, senior_price, vet_price)
+	VALUES (22, 'See Website','age under 3', 'age 3-12', 'age 13+', 'age 60+', 0.00, 8.95, 15.95, 12.95, 12.95);
+
+
+
+
+
+-- Table: public.information
+
+-- DROP TABLE public.information;
+
+CREATE TABLE public.information
+(
+    id integer NOT NULL,
+    hours text COLLATE pg_catalog."default",
+    telephone_num bigint,
+    website text COLLATE pg_catalog."default",
+    admission integer,
+    CONSTRAINT information_pkey PRIMARY KEY (id),
+    CONSTRAINT information_admission_fkey FOREIGN KEY (admission)
+        REFERENCES public.admissions (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.information
+    OWNER to postgres;
+
 
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (11, 'Monday - Saturday: 9 am - 5 pm; Sunday: 12 noon - 5 pm', 'Free; Free Eco-Detective kit rental with $1 donation', 5123278180, 'http://www.austintexas.gov/department/austin-nature-and-science-center');
+	VALUES (1, 'Schedule varies with the seasons. See website for all the details.', 1, 8172721183, 'http://www.uta.edu/planetarium/');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (12, 'Tuesday - Saturday 10 am to 5 pm; Wednesday Nights - 5pm to 8pm; Sunday - Noon to 5pm', 'Adults $5.50; Children 2 years old and up $5.50; Children 12-13 months $3.50; Children under 12 months Free.', 5124722499, 'http://www.austinkids.org');
+	VALUES (2, 'See Website', 2, 2145156500, 'http://www.dallasarboretum.org/');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (13, 'Sunday: 1:00 a, to 5:00 pm all year round; There is no June through Aug. program', '$8 adults; $6 children ages 2-12; Special tour prices available', 5128371215, 'www.pioneerfarms.org');
+	VALUES (3, '9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day', 3, 2146705656, 'http://www.dallas-zoo.org/');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (14, '10:00am – 6:00pm daily; No admittance after 5:00pm', 'Children (ages 2 – 12) $4.00; Adults $7.00; Students (must show Student ID) $5.00; Military (must show Military ID) $5.00; Grandparents/Seniors $5.00; Train Ticket (ages 2 and up) $2.50', 5122881490, 'http://www.austinzoo.org/');
+	VALUES (4, 'April 1 - October 22: 10 a.m. to 5 p.m. Weekdays; 10 a.m. to 6 p.m. Weekends', 4, 8177597500, 'http://www.fortworthzoo.com/');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (15, 'Sun - Wed: 9 - 6; Thur: 9 - 8; Fri - Sat: 9 - 6', 'Austin resident (ages 13-61): $1 for children (ages 3-12), $2 for adults; Non-resident (ages 13-61): $3 for adults, $1 for seniors (age 62 & over)', 5124778672, 'http://zilkergarden.org');
+	VALUES (5, 'Check the website for various events and times.', 5, 8172559300, 'http://www.fortworthmuseum.org');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (16, 'Monday - Friday: 9:00 am - 5:00 pm; Saturday: 10:00 am - 5:00 pm; Sunday: 1:00 pm - 5:00 pm', 'Free', 5124711604, 'http://www.utexas.edu/depts/tmm');
+	VALUES (6, 'Aquarium / Rainforest / Gift Shop Open 7 Days A Week, 10am - 5pm (Closed Thanksgiving & Christmas); Cafe Maya Restaurant 11:30am - 2:30pm; "Eighteen-O-One" Restaurant 11:30am - 2:30pm; Jungle Cafe 11am - 4pm', 22, 2147202224, 'http://www.dwazoo.com');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (17, 'Summer Hours: 9:00 AM - 6:00 PM; Off-season Hours: Varies according to reserved groups, please check website or call.', 'Basic Tour = Adults $ 16.95; Children $ 8.95; Under 3 free; other options & discounts available', 5129312283, 'http://myinnerspacecavern.com');
+	VALUES (7, 'Monday-Saturday: 10am to 5pm; Sunday: 1pm to 5pm; Always check website for changes/exceptions.', 6, 2143503600, 'http://www.flightmuseum.com');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (8, 'Wed: 9AM-4PM; Sat: 9AM-5PM; Sun: 11AM-5PM', 12, 8557338627, 'http://fortworthaviationmuseum.com/');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (9, 'Mon-Fri: 10 am - 5 pm; Sat-Sun: 10 am - 5 pm; Final admission is sold at 4:45 pm.; Closed New Year''s Day, Thanksgiving Day, and Christmas Eve and Day.', 7, 2144287476, 'http://texasdiscoverygardens.org/');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (10, 'February-July, September-December:Tuesday - Saturday: 10 AM to 4 PM; Sunday: Noon to 4 PM; Monday: Closed to the public; Closed August and January, as well as Thanksgiving Day, Christmas Eve, Christmas Day, New Year''s Eve and New Year''s Day.', 8, 2144285448, 'http://www.dallasheritagevillage.org/');
 
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (18, 'Monday-Thursday: 10:30am-6pm; Friday-Sunday: 10:30am-10pm', 'General Admission: $82.99; Children Under 48 inches: $67.99, Children 2 & Under: Free; School Groups: special pricing, see website', 8176408900, 'https://www.sixflags.com/overtexas');
+	VALUES (11, 'Monday - Saturday: 9 am - 5 pm; Sunday: 12 noon - 5 pm', 9, 5123278180, 'http://www.austintexas.gov/department/austin-nature-and-science-center');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (19, 'Monday-Thursday: 10am-5pm; Friday: 10am-6pm; Saturday: 10am-8pm; Sunday: 10am-6pm', 'Adult: $59.99; School Groups: $12 per program per participant', 2105204732, 'https://seaworld.com/san-antonio/?gclid=EAIaIQobChMIttCB1dK04gIVk7jACh0rEgenEAAYASAAEgKNYPD_BwE');
+	VALUES (12, 'Tuesday - Saturday 10 am to 5 pm; Wednesday Nights - 5pm to 8pm; Sunday - Noon to 5pm', 10, 5124722499, 'http://www.austinkids.org');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (20, 'Monday-Thursday: 10:30am-6pm; Friday-Sunday: 10:30am-10pm', 'General Admission: $82.99; Children Under 48 inches: $67.99, Children 2 & Under: Free; School Groups: special pricing, see website', 2106975050, 'https://www.sixflags.com/fiestatexas');
+	VALUES (13, 'Sunday: 1:00 a, to 5:00 pm all year round; There is no June through Aug. program', 11, 5128371215, 'www.pioneerfarms.org');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (21, 'Varies: see Website', 'School Groups: Students: $9.00; 1 Free teacher for every 10 Students; Additional Adults: $9.00; General Admissions: Guests with Special Needs: Free; Children 2 & Under: Free; Children (3-17): $11; Adult(18-61): $17; Military(with valid id): $11; Seniors(62+): $11', 2104955888, 'https://www.morganswonderland.com/');
+	VALUES (14, '10:00am – 6:00pm daily; No admittance after 5:00pm', 13, 5122881490, 'http://www.austinzoo.org/');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (22, 'Monday/Tuesday/Thursday: 4-8pm; Wednesday: 10am-12pm, 4-8pm; Friday: 10am-12pm, 4-11pm; Saturday: 10-11am, Sunday: 12-8pm', '1-hour pass: $12; 2-hour pass: $22; All-Day Pass: $30; Toddler Tumble: $8', 8172462710, 'http://www.flightdecktrampolinepark.com/');
+	VALUES (15, 'Sun - Wed: 9 - 6; Thur: 9 - 8; Fri - Sat: 9 - 6', 14, 5124778672, 'http://zilkergarden.org');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (23, 'Monday: 2-9pm, Tuesday/Thursday/Friday/Saturday: 12-7pm, Wednesday: closed, Sunday: 1-6pm; Special Holiday Hours: see website', '48 inches tall and above: $8.50; under 48 inches tall: $8.00; 12 months and under: free', 8172757542, 'https://naturallyfun.org/pools/randol-mill');
+	VALUES (16, 'Monday - Friday: 9:00 am - 5:00 pm; Saturday: 10:00 am - 5:00 pm; Sunday: 1:00 pm - 5:00 pm', 9, 5124711604, 'http://www.utexas.edu/depts/tmm');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (24, 'Monday-Friday: 10am-6pm, Saturday/Sunday: 1-6pm', '$2.00 per person', 9722374167, 'https://grandfungp.com/aquatics/splash-factory/');
+	VALUES (17, 'Summer Hours: 9:00 AM - 6:00 PM; Off-season Hours: Varies according to reserved groups, please check website or call.', 15, 5129312283, 'http://myinnerspacecavern.com');
+
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (25, 'Monday-Thusday: 10am-5pm | Friday-Sunday: 10am-8pm; last ticket sold 1 hours prior to closing', 'School Groups: Special pricing, see website', 9722632391, 'https://www.ripleys.com/grandprairie/');
+	VALUES (18, 'Monday-Thursday: 10:30am-6pm; Friday-Sunday: 10:30am-10pm', 16, 8176408900, 'https://www.sixflags.com/overtexas');
 INSERT INTO public."information"(
 	id, hours, admission, telephone_num, website)
-	VALUES (26, 'See Website', 'See Website; Book at least 1 week in advance', 8178928687, 'https://attstadium.com/tours/educational-tour/');
+	VALUES (19, 'Monday-Thursday: 10am-5pm; Friday: 10am-6pm; Saturday: 10am-8pm; Sunday: 10am-6pm', 17, 2105204732, 'https://seaworld.com/san-antonio/?gclid=EAIaIQobChMIttCB1dK04gIVk7jACh0rEgenEAAYASAAEgKNYPD_BwE');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (20, 'Monday-Thursday: 10:30am-6pm; Friday-Sunday: 10:30am-10pm', 16, 2106975050, 'https://www.sixflags.com/fiestatexas');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (21, 'Varies: see Website', 18, 2104955888, 'https://www.morganswonderland.com/');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (22, 'Monday/Tuesday/Thursday: 4-8pm; Wednesday: 10am-12pm, 4-8pm; Friday: 10am-12pm, 4-11pm; Saturday: 10-11am, Sunday: 12-8pm', 19, 8172462710, 'http://www.flightdecktrampolinepark.com/');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (23, 'Monday: 2-9pm, Tuesday/Thursday/Friday/Saturday: 12-7pm, Wednesday: closed, Sunday: 1-6pm; Special Holiday Hours: see website', 20, 8172757542, 'https://naturallyfun.org/pools/randol-mill');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (24, 'Monday-Friday: 10am-6pm, Saturday/Sunday: 1-6pm', 21, 9722374167, 'https://grandfungp.com/aquatics/splash-factory/');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (25, 'Monday-Thusday: 10am-5pm | Friday-Sunday: 10am-8pm; last ticket sold 1 hours prior to closing', 2, 9722632391, 'https://www.ripleys.com/grandprairie/');
+INSERT INTO public."information"(
+	id, hours, admission, telephone_num, website)
+	VALUES (26, 'See Website', 2, 8178928687, 'https://attstadium.com/tours/educational-tour/');
 
 
 

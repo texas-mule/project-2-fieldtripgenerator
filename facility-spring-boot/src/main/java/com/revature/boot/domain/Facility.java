@@ -17,18 +17,27 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "facilities")
 @NamedQueries({
-		@NamedQuery(name = "searchFacilityByName", 
-					query = "from Facility where LOWER(name) LIKE LOWER(CONCAT('%',:name, '%'))"),
-		@NamedQuery(name = "searchFeature",
-					query = "from Facility where lower(description) like lower(concat('%', :feat, '%'))"),
-		@NamedQuery(name = "search",
-					query = "from Facility where (LOWER(name) LIKE LOWER(CONCAT('%',:feat, '%'))) or (lower(description) like lower(concat('%', :feat, '%')))"),
-		@NamedQuery(name = "getContactInfoByName",
-					query = "select f.visiting_info from Facility as f where f.name = :name")
-		})
+		@NamedQuery(name = "searchFacilityByName", query = "from Facility where LOWER(name) LIKE LOWER(CONCAT('%',:name, '%'))"),
+		@NamedQuery(name = "searchFeature", query = "from Facility where lower(description) like lower(concat('%', :feat, '%'))"),
+		@NamedQuery(name = "search", query = "from Facility where (LOWER(name) LIKE LOWER(CONCAT('%',:feat, '%'))) or (lower(description) like lower(concat('%', :feat, '%')))"),
+		@NamedQuery(name = "getContactInfoByName", query = "select f.visiting_info from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getFullAddress", query = "select f.address, f.city, f.state, f.zip from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getAddress", query = "select f.address from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getCity", query = "select f.city from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getZip", query = "select f.zip from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getState", query = "select f.state from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getPhone", query = "select f.visiting_info.phone_num from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getWebsite", query = "select f.visiting_info.web_site from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getAdultPrice", query = "select f.visiting_info.admission.adultPrice from Facility as f where f.name = :name"),
+		@NamedQuery(name = "getChildPrice", query = "select f.visiting_info.admission.childPrice from Facility as f where f.name = :name") })
 public class Facility {
 	@Id
 	private Long id;
+	@Pattern(regexp = "[a-zA-Z]+")
+	@javax.validation.constraints.Size(min = 2, max = 45)
+	@NotBlank
+	@Column(name = "facility_name")
+	private String name;
 	@Column(name = "description")
 	private String description;
 	@Column(name = "address")
@@ -43,11 +52,6 @@ public class Facility {
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "visit_id")
 	private Information visiting_info;
-	@Pattern(regexp = "[a-zA-Z]+")
-	@javax.validation.constraints.Size(min = 2, max = 45)
-	@NotBlank
-	@Column(name = "facility_name")
-	private String name;
 
 	public Facility(Long id, String description, String address, String city, @Pattern(regexp = "[A-Z]+") String state,
 			int zip, Information visiting_info,
