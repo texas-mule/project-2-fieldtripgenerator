@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.revature</groupId>
-	<artifactId>boot</artifactId>
+	<artifactId>facility-spring-boot</artifactId>
 	<version>0.0.1-a</version>
 	<packaging>war</packaging>
 	<name>boot</name>
