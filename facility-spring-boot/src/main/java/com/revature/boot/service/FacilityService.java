@@ -155,4 +155,9 @@ public class FacilityService {
 		query.setParameter("name", name);
 		return (double) query.getSingleResult();
 	}
+	
+	@Transactional
+	public double estimatePrice(int numStudents, int numTeachers, String facilityName) {
+		return (this.getChildPrice(facilityName) * numStudents) + (this.getAdultPrice(facilityName) * numTeachers);
+	}
 }
