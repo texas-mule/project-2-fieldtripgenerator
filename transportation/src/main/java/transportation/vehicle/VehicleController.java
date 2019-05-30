@@ -28,11 +28,12 @@ public class VehicleController {
     int totalbuscapacity = 0;
     List<Vehicle> vehiclestable = vehicleservice.getAllVehicles();
     ArrayList<Vehicle> availablevehicles = new ArrayList<Vehicle>();
-    List<Integer> bestbusesindex = null;
+    List<Integer> bestbusesindex = new ArrayList<Integer>();
+
     for (Vehicle vehiclerow : vehiclestable) {
-      totalbuscapacity += vehiclerow.getTotal_seats();
       if (vehiclerow.getAvailability()) {
         availablevehicles.add(vehiclerow);
+        totalbuscapacity += vehiclerow.getTotal_seats();
       }
     }
     if (passengers > totalbuscapacity) {
@@ -57,13 +58,16 @@ public class VehicleController {
           index++;
         }
         bestbusesindex.add(indexofhighest);
+        availablevehicles.remove(indexofhighest);
+        passengersleft -= vehiclestable.get(indexofhighest).getTotal_seats();
       }
-      List<Vehicle> bestbuses = null;
+
+      List<Vehicle> bestbuses = new ArrayList<Vehicle>();
       for (Integer index : bestbusesindex) {
-        bestbuses.add(vehiclestable.get(index));
+        bestbuses.add(vehiclestable.get(index));       
       }
+      return bestbuses;
     }
-    return null;
   }
 
   @GetMapping("/test")
