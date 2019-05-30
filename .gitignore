@@ -108,3 +108,6 @@ flows/
 catalog/
 reports/
 .mule/
+
+# Settings files
+*.properties
