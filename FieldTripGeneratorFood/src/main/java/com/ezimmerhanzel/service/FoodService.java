@@ -40,8 +40,8 @@ public class FoodService {
 
 	public void findFood(Coordinate coord) {
 		String urlString = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-				+ "?key=AIzaSyCcRZDChd6Qf4PVLgaYL2GZ4SjCYyvSvKU" + "&location=" + coord.toString()
-				+ "&rankby=distance" + "&type=restaurant";
+				+ "?key=AIzaSyCcRZDChd6Qf4PVLgaYL2GZ4SjCYyvSvKU" + "&location=" + coord.toString() + "&rankby=distance"
+				+ "&type=restaurant";
 		try {
 			URL url = new URL(urlString);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -51,28 +51,39 @@ public class FoodService {
 			Iterator<?> iterator = jsonArray.iterator();
 			String rating;
 			String price_level;
+			String address;
 			for (int i = 0; i < 5; i++) {
 				jsonObject = (JSONObject) jsonParser.parse(iterator.next().toString());
-				if (jsonObject.containsKey("rating") ) {
+				if (jsonObject.containsKey("rating")) {
 					rating = jsonObject.get("rating").toString();
 				} else {
-					rating = "Couldn't find a rating for this place.  Do with that information what you will.";
+					rating = "Could not find a rating.";
 				}
-				if(jsonObject.containsKey("price_level")) {
+				if (jsonObject.containsKey("price_level")) {
 					price_level = jsonObject.get("price_level").toString();
 				} else {
-					price_level = "We couldn't find a price level for you.  Order at your own risk.";
+					price_level = "Could not find a price level.";
 				}
-				
-				foodRepository.addFood(new Food(jsonObject.get("name").toString(),
-						rating,
-						price_level,
-						new Coordinate(Double.parseDouble(((Map) ((Map) jsonObject.get("geometry")).get("location")).get("lat").toString()),
-								Double.parseDouble(((Map) ((Map) jsonObject.get("geometry")).get("location")).get("lng").toString()))));
+				if (jsonObject.containsKey("vicinity")) {
+					address = jsonObject.get("vicinity").toString();
+				} else {
+					address = "Could not find an Address.";
+				}
+				foodRepository.addFood(new Food(jsonObject.get("name").toString(), rating, price_level, address,
+						new Coordinate(
+								Double.parseDouble(
+										((Map<?, ?>) ((Map<?, ?>) jsonObject.get("geometry")).get("location"))
+												.get("lat").toString()),
+								Double.parseDouble(
+										((Map<?, ?>) ((Map<?, ?>) jsonObject.get("geometry")).get("location"))
+												.get("lng").toString()))));
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			//foodRepository.addFood(new Food());
 		}
+	}
+
+	public Collection<Food> chooseFood(String name) {
+		return foodRepository.getOne(name);
 	}
 }
