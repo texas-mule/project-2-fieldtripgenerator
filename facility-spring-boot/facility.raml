@@ -1,0 +1,637 @@
+#%RAML 1.0
+title: Fieldtrip Places API
+version: v1
+#baseUri: /fieldtrip
+types:
+  Class: 
+    type: object
+    properties: 
+      id: number
+      grade: number
+      teacher: string
+      class_size: number
+  Facility:
+    type: object
+    properties:
+      id: number
+      facility: string
+      description: string
+      address: string
+      visiting_info:
+        displayName: Visiting Information
+        type: object
+        description: Contact Information of a facility
+        required: true
+        properties:
+          hours: string
+          admission: 
+            displayName: Admission
+            type: object
+            properties: 
+              id: number
+              details: string
+              babyAge: string
+              babyPrice: number
+              childAge: string
+              childPrice: number
+              adultAge: string
+              adultPrice: number
+              seniorAge: string
+              seniorPrice: number
+              vetPrice: number
+          telephone: number
+          website: string
+/facilities:
+  description: Collection of all available fieldtrip location facilities
+  get:
+    description: get a list of fieldtrip location facilities
+    queryParameters: 
+      name:  
+        description: "The name of the facility to search"
+        required: true
+        example: "Dallas Zoo"
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {
+              [{"id":1,
+              "name":"Planetarium at UT Arlington",
+              "description":"The Planetarium full-dome star shows are fantastic, fabulous and fun! With spectacular 3-D digital animations and a super starry sky, you’ll discover an amazing array of astronomical gems. And the music shows are a collection of themed songs set to dazzling lights and animations. What a set of sights and sounds for your senses to enjoy!",
+              "address":"700 Planetarium Place",
+              "city":"Arlington",
+              "state":"TX",
+              "zip":76019,
+              "visiting_info":{
+                "id":1,
+                "hours":"Schedule varies with the seasons. See website for all the details.",
+                "admission":{
+                  "id":1,
+                  "babyAge":"age 0 - 3",
+                  "babyPrice":0.0,
+                  "childAge":"age 4 - 17",
+                  "childPrice":4.0,
+                  "adultAge":"18 and Up",
+                  "adultPrice":5.0,
+                  "seniorAge":"65+",
+                  "seniorPrice":4.0,
+                  "veteranPrice":3.0
+                phone_num":8172721183,
+                "web_site":"http://www.uta.edu/planetarium/"}},
+              {"id":2,
+              "name":"Dallas Arboretum",
+              "description":"\tThe Dallas Arboretum and Botanical Gardens was created to preserve history and nature. Though the gardens are comparatively young, they are leading the field in pursuit of their mission, which has four parts. They are a world-class display garden, committed to building a maintaining a public venue that: Promotes the art, enjoyment and knowledge of horticulture; Provides opportunities for education and research, to give back to the field; Maintains and develops the Arboretum as an essential resource in Dallas; and Prioritizes good management and fiscal responsibility.",
+              "address":"8525 Garland Road",
+              "city":"Dallas",
+              "state":"TX",
+              "zip":75218,
+              "visiting_info":{
+                "id":2,
+                "hours":"See Website",
+                "admission":{
+                  "id":2,
+                  "babyAge":"age 0 - 3",
+                  "babyPrice":0.0,
+                  "childAge":"age 4 - 17",
+                  "childPrice":5.0,
+                  "adultAge":"18 and Up",
+                  "adultPrice":10.0,
+                  "seniorAge":"65+",
+                  "seniorPrice":8.0,
+                  "veteranPrice":8.0},
+                "phone_num":2145156500,
+                "web_site":"http://www.dallasarboretum.org/"}},
+              {
+              "id":3,
+              "name":"Dallas Zoo",
+              "description":"With 95 acres to explore, thousands of animals to visit, and a huge variety of family activities, the Dallas Zoo is enormously entertaining! This 114-year-old refuge is home to exotic and traditional zoo animals. The tallest statue in Texas marks the entrance, a 67.5 foot giraffe that greets visitors. The Wilds of Africa attraction includes the chimpanzee forest, the gorilla center and an aviary on a quarter-mile nature trail where you will explore several habitats including forest, mountain, woodland, river, desert and brush. Be sure to take the 20-minute monorail ride, which runs the course of the attraction and costs an additional fee but is well worth it. At ZooNorth experience many animals in their environments, including a bird and reptile building, children's zoo with touchable animals, cheetah exhibit and birds of prey, as well as elephants, giraffes, flamingos and other traditional animals.",
+              "address":"650 South R.L. Thorton Fwy",
+              "city":"Dallas",
+              "state":"TX",
+              "zip":75203,
+              "visiting_info":{
+                "id":3,
+                "hours":"9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day",
+                "admission":{
+                  "id":3,
+                  "babyAge":"age 2 and under",
+                  "babyPrice":0.0,
+                  "childAge":"age 3-11",
+                  "childPrice":5.75,
+                  "adultAge":"age 12-64",
+                  "adultPrice":8.75,
+                  "seniorAge":"age 65 and up",
+                  "seniorPrice":5.0,
+                  "veteranPrice":5.0},
+                "phone_num":2146705656,
+                "web_site":"http://www.dallas-zoo.org/"}}
+              ]}
+      404:
+        body: 
+          application/json:
+            example: |
+              {"message": "no fieldtrip locations available"}
+/website/{name}:
+  get:
+    description: "Get the website of the location with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          text/plain:
+            example: |
+              {http://www.dallas-zoo.org/}
+      404:
+        body:
+          text/plain:
+            example: |
+              {"message": "No website found"}
+/phone/{name}:
+  get:
+    description: "Get the phone of the location with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          text/plain:
+            example: |
+              {2146705656}
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No phone number found"}
+/zip/{name}:
+  get:
+    description: "Get the zip code of the location with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          text/plain:
+            example: |
+              {75203}
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No zip code found"}
+/state/{name}:
+  get:
+    description: "Get the state of the location with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          text/plain:
+            example: |
+              {TX}
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No state found"}
+/city/{name}:
+  get:
+    description: "Get the city of the location with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          text/plain:
+            example: |
+              {Dallas}
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No city found"}
+/address:
+    /{name}:
+      get:
+        description: "Get the address of the location with specified name"
+        queryParameters: 
+          name:  
+            description: "The name of the facility"
+            required: true
+            example: "Dallas Zoo" 
+        responses: 
+          200:
+            body:
+              text/plain:
+                example: |
+                  {650 South R.L. Thorton Fwy}    
+          404:
+            body:
+              application/json:
+                example: |
+                  {"message": "No address found"}
+/full/{name}:
+  get:
+    description: "Get the full address of the location with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          text/plain:
+            example: |
+              {650 South R.L. Thorton Fwy Dallas, TX 75203}  
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No address found"}
+/price:
+  /child/{name}:
+    get:
+      description: "Get the price of a child's ticket for the location with specified name"
+      queryParameters: 
+        name:  
+          description: "The name of the facility"
+          required: true
+          example: "Dallas Zoo" 
+      responses: 
+        200:
+          body:
+            text/plain:
+              example: |
+                {5.75}
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "No price found"}
+  /adult/{name}:
+    get:
+      description: "Get the price of an adult's ticket for the location with specified name"
+      queryParameters: 
+        name:  
+          description: "The name of the facility"
+          required: true
+          example: "Dallas Zoo" 
+      responses: 
+        200:
+          body:
+            text/plain:
+              example: |
+                {8.75}
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "No price found"}7yfcym76
+/search:
+    /{feat}:
+      get:
+        description: "Search for a feature in name or description, return list of matches"
+        queryParameters: 
+          feat:  
+            description: "The name of the feature to search for"
+            required: true
+            example: "flight" 
+        responses: 
+          200:
+            body:
+              application/json:
+                example: |
+                  {[{
+                  "id":7,
+                  "name":"Frontiers of Flight Museum",
+                  "description":"A wonderful learning experience that exhibits all things related to flying! From the Wright Brothers to space exploration, this museum has a great display of all types of air transportation and equipment. There is an area specifically for younger kids and for older children there is the opportunity to touch, feel and sometimes climb into real aircraft. The docents at this museum make the experience memorable by interacting with children, sharing their knowledge and asking thought provoking questions.",
+                  "address":"6911 Lemmon Ave",
+                  "city":"Dallas",
+                  "state":"TX",
+                  "zip":75209,
+                  "visiting_info":{
+                    "id":7,
+                    "hours":"Monday-Saturday: 10am to 5pm; Sunday: 1pm to 5pm; Always check website for changes/exceptions.",
+                    "admission":{
+                      "id":6,
+                      "babyAge":"age 6 and under",
+                      "babyPrice":0.0,
+                      "childAge":"age 6-17",
+                      "childPrice":5.0,
+                      "adultAge":"age 18+",
+                      "adultPrice":8.0,
+                      "seniorAge":"age 65+",
+                      "seniorPrice":6.0,
+                      "veteranPrice":0.0},
+                      "phone_num":2143503600,
+                      "web_site":"http://www.flightmuseum.com"}},{
+                  "id":22,
+                  "name":"Flight Deck Trampoline Park",
+                  "description":"Flight Deck Trampoline Park is DFW’s hottest destination for family fun! Come take flight on our massive indoor court of connected trampolines for an unforgettable adventure. Duck and dive on dodgeball courts, slam dunk on our basketball lanes, soar onto our air bag or just coast at the FDTP Academy, our safe zone for our junior flyers.",
+                  "address":"1600 Interstate 20 W.",
+                  "city":"Arlington",
+                  "state":"TX",
+                  "zip":76017,
+                  "visiting_info":{
+                    "id":22,
+                    "hours":"Monday/Tuesday/Thursday: 4-8pm; Wednesday: 10am-12pm, 4-8pm; Friday: 10am-12pm, 4-11pm; Saturday: 10-11am, Sunday: 12-8pm",
+                    "admission":{
+                      "id":19,
+                      "babyAge":"age under 6 months",
+                      "babyPrice":0.0,
+                      "childAge":"age 6 months - 6 years",
+                      "childPrice":8.0,
+                      "adultAge":"age 6+",
+                      "adultPrice":30.0,
+                      "seniorAge":"age 65+",
+                      "seniorPrice":30.0,
+                      "veteranPrice":30.0},
+                    "phone_num":8172462710,
+                    "web_site":"http://www.flightdecktrampolinepark.com/"}}]}                    
+          404:
+            body:
+              application/json:
+                example: |
+                  {"message": "No facilities found"}
+/feature/{feat}:
+  get:
+    description: "Search for a feature within the description, return list of matches"
+    queryParameters: 
+      feat:  
+        description: "The name of the feature to search for"
+        required: true
+        example: "flight" 
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {[{
+              "id":22,
+              "name":"Flight Deck Trampoline Park",
+              "description":"Flight Deck Trampoline Park is DFW’s hottest destination for family fun! Come take flight on our massive indoor court of connected trampolines for an unforgettable adventure. Duck and dive on dodgeball courts, slam dunk on our basketball lanes, soar onto our air bag or just coast at the FDTP Academy, our safe zone for our junior flyers.",
+              "address":"1600 Interstate 20 W.",
+              "city":"Arlington",
+              "state":"TX",
+              "zip":76017,
+              "visiting_info":{
+                "id":22,
+                "hours":"Monday/Tuesday/Thursday: 4-8pm; Wednesday: 10am-12pm, 4-8pm; Friday: 10am-12pm, 4-11pm; Saturday: 10-11am, Sunday: 12-8pm",
+                "admission":{
+                  "id":19,
+                  "babyAge":"age under 6 months",
+                  "babyPrice":0.0,
+                  "childAge":"age 6 months - 6 years",
+                  "childPrice":8.0,
+                  "adultAge":"age 6+",
+                  "adultPrice":30.0,
+                  "seniorAge":"age 65+",
+                  "seniorPrice":30.0,
+                  "veteranPrice":30.0},
+                "phone_num":8172462710,
+                "web_site":"http://www.flightdecktrampolinepark.com/"}}]}                      
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No facilities found"}
+/name/{name}:
+  get:
+    description: "Search for a word within a name, return list of matches"
+    queryParameters: 
+      name:  
+        description: "The name of the facility to search for"
+        required: true
+        example: "Dallas Zoo" 
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {[{
+              "id":2,
+              "name":"Dallas Arboretum",
+              "description":"\tThe Dallas Arboretum and Botanical Gardens was created to preserve history and nature. Though the gardens are comparatively young, they are leading the field in pursuit of their mission, which has four parts. They are a world-class display garden, committed to building a maintaining a public venue that: Promotes the art, enjoyment and knowledge of horticulture; Provides opportunities for education and research, to give back to the field; Maintains and develops the Arboretum as an essential resource in Dallas; and Prioritizes good management and fiscal responsibility.",
+              "address":"8525 Garland Road",
+              "city":"Dallas",
+              "state":"TX",
+              "zip":75218,
+              "visiting_info":{
+                "id":2,
+                "hours":"See Website",
+                "admission":{
+                  "id":2,
+                  "babyAge":"age 0 - 3",
+                  "babyPrice":0.0,
+                  "childAge":"age 4 - 17",
+                  "childPrice":5.0,
+                  "adultAge":"18 and Up",
+                  "adultPrice":10.0,
+                  "seniorAge":"65+",
+                  "seniorPrice":8.0,
+                  "veteranPrice":8.0},
+                "phone_num":2145156500,
+                "web_site":"http://www.dallasarboretum.org/"}},{
+              "id":3,
+              "name":"Dallas Zoo",
+              "description":"With 95 acres to explore, thousands of animals to visit, and a huge variety of family activities, the Dallas Zoo is enormously entertaining! This 114-year-old refuge is home to exotic and traditional zoo animals. The tallest statue in Texas marks the entrance, a 67.5 foot giraffe that greets visitors. The Wilds of Africa attraction includes the chimpanzee forest, the gorilla center and an aviary on a quarter-mile nature trail where you will explore several habitats including forest, mountain, woodland, river, desert and brush. Be sure to take the 20-minute monorail ride, which runs the course of the attraction and costs an additional fee but is well worth it. At ZooNorth experience many animals in their environments, including a bird and reptile building, children's zoo with touchable animals, cheetah exhibit and birds of prey, as well as elephants, giraffes, flamingos and other traditional animals.",
+              "address":"650 South R.L. Thorton Fwy",
+              "city":"Dallas",
+              "state":"TX",
+              "zip":75203,
+              "visiting_info":{
+                "id":3,
+                "hours":"9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day",
+                "admission":{
+                  "id":3,
+                  "babyAge":"age 2 and under",
+                  "babyPrice":0.0,
+                  "childAge":"age 3-11",
+                  "childPrice":5.75,
+                  "adultAge":"age 12-64",
+                  "adultPrice":8.75,
+                  "seniorAge":"age 65 and up",
+                  "seniorPrice":5.0,
+                  "veteranPrice":5.0},
+                "phone_num":2146705656,
+                "web_site":"http://www.dallas-zoo.org/"}}]}                      
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No facilities found"}
+/contact:
+  get:
+    description: "Get list of all information" 
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {[{
+              "id":1,
+              "hours":"Schedule varies with the seasons. See website for all the details.",
+              "admission":{
+                "id":1,
+                "babyAge":"age 0 - 3",
+                "babyPrice":0.0,
+                "childAge":"age 4 - 17",
+                "childPrice":4.0,
+                "adultAge":"18 and Up",
+                "adultPrice":5.0,
+                "seniorAge":"65+",
+                "seniorPrice":4.0,
+                "veteranPrice":3.0},
+              "phone_num":8172721183,
+              "web_site":"http://www.uta.edu/planetarium/"},{
+              "id":2,
+              "hours":"See Website",
+              "admission":{
+                "id":2,
+                "babyAge":"age 0 - 3",
+                "babyPrice":0.0,
+                "childAge":"age 4 - 17",
+                "childPrice":5.0,
+                "adultAge":"18 and Up",
+                "adultPrice":10.0,
+                "seniorAge":"65+",
+                "seniorPrice":8.0,
+                "veteranPrice":8.0},
+              "phone_num":2145156500,
+              "web_site":"http://www.dallasarboretum.org/"},{
+              "id":3,
+              "hours":"9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day",
+              "admission":{
+                "id":3,
+                "babyAge":"age 2 and under",
+                "babyPrice":0.0,
+                "childAge":"age 3-11",
+                "childPrice":5.75,
+                "adultAge":"age 12-64",
+                "adultPrice":8.75,
+                "seniorAge":"age 65 and up",
+                "seniorPrice":5.0,
+                "veteranPrice":5.0},
+              "phone_num":2146705656,
+              "web_site":"http://www.dallas-zoo.org/"}]
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "No information found"}
+  /{name}:
+    get:
+      description: "Get the information of a facility with specified name"
+      queryParameters: 
+        name:  
+          description: "The name of the facility to search"
+          required: true
+          example: "Dallas Zoo"
+      responses: 
+        200:
+          body:
+            application/json:
+              example: |
+                {"id":3,
+                "hours":"9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day",
+                "admission":{
+                  "id":3,
+                  "babyAge":"age 2 and under",
+                  "babyPrice":0.0,
+                  "childAge":"age 3-11",
+                  "childPrice":5.75,
+                  "adultAge":"age 12-64",
+                  "adultPrice":8.75,
+                  "seniorAge":"age 65 and up",
+                  "seniorPrice":5.0,
+                  "veteranPrice":5.0},
+                "phone_num":2146705656,
+                "web_site":"http://www.dallas-zoo.org/"}        
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "no information found"}
+
+/{name}:
+  get:
+    description: "Get the facility with specified name"
+    queryParameters: 
+      name:  
+        description: "The name of the facility to search"
+        required: true
+        example: "Dallas Zoo"
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {"id":3,
+              "name":"Dallas Zoo",
+              "description":"With 95 acres to explore, thousands of animals to visit, and a huge variety of family activities, the Dallas Zoo is enormously entertaining! This 114-year-old refuge is home to exotic and traditional zoo animals. The tallest statue in Texas marks the entrance, a 67.5 foot giraffe that greets visitors. The Wilds of Africa attraction includes the chimpanzee forest, the gorilla center and an aviary on a quarter-mile nature trail where you will explore several habitats including forest, mountain, woodland, river, desert and brush. Be sure to take the 20-minute monorail ride, which runs the course of the attraction and costs an additional fee but is well worth it. At ZooNorth experience many animals in their environments, including a bird and reptile building, children's zoo with touchable animals, cheetah exhibit and birds of prey, as well as elephants, giraffes, flamingos and other traditional animals.",
+              "address":"650 South R.L. Thorton Fwy",
+              "city":"Dallas",
+              "state":"TX",
+              "zip":75203,
+              "visiting_info":{
+                "id":3,
+                "hours":"9:00 a.m. to 5:00 p.m. daily;*Closed Christmas day",
+                "admission":{
+                  "id":3,
+                  "babyAge":"age 2 and under",
+                  "babyPrice":0.0,
+                  "childAge":"age 3-11",
+                  "childPrice":5.75,
+                  "adultAge":"age 12-64",
+                  "adultPrice":8.75,
+                  "seniorAge":"age 65 and up",
+                  "seniorPrice":5.0,
+                  "veteranPrice":5.0},
+                "phone_num":2146705656,
+                "web_site":"http://www.dallas-zoo.org/"}}
+/opps:
+  get:
+    description: "Get the mistake message"
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {"message": "Error Page"}
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "Error page not found"}
+/estimate:
+  post:
+    description: "Create a price estimate with given info"
+#    put:
+#    /name/{name}:
+#    /description{name}: 
+#    /address/{name}:
+#    /city/{name}:
+#    /state/{name}:
+#    /zip/{name}:
+
+/{id}:
+  delete:
+    description: "Remove the location with specified id"
