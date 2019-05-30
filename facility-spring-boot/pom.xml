@@ -13,7 +13,7 @@
 	<artifactId>facility-spring-boot</artifactId>
 	<version>0.0.1-a</version>
 	<packaging>war</packaging>
-	<name>boot</name>
+	<name>facility</name>
 	<description>Facility Spring Boot</description>
 
 	<properties>
