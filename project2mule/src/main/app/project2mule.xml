@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/current/mule-objectstore.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8081" doc:name="HTTP Listener Configuration"/>
+    <smtp:gmail-connector name="Gmail" contentType="text/html" validateConnections="true" doc:name="Gmail"/>
+    <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration"/>
+    <objectstore:config name="ObjectStore__Connector" partition="information" doc:name="ObjectStore: Connector"/>
+    <http:request-config name="Event_APIConnection" host="localhost" port="8080" doc:name="HTTP Request Configuration" basePath="/facilities"/>
+    <http:request-config name="GoogleGeoCoords" protocol="HTTPS" host="maps.googleapis.com" port="443" doc:name="HTTP Request Configuration" basePath="/maps/api/geocode"/>
+    <http:request-config name="GoogleGeoCode" protocol="HTTPS" host="maps.googleapis.com" port="443" basePath="/maps/api/geocode" doc:name="HTTP Request Configuration"/>
+    <http:request-config name="Food_APIConnection" host="localhost" port="8080" basePath="/food" doc:name="HTTP Request Configuration"/>
+
+    <flow name="EmailTest">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/email" allowedMethods="GET" doc:name="Send Email Test"/>
+        <logger message="payload after retrieve all keys #[payload]" level="INFO" doc:name="Log All Keys"/>
+        <flow-ref name="FoodInfo" doc:name="SUB: FoodInfo"/>
+        <logger message="Paylod of Retrieve: #[flowVars.name]" level="INFO" doc:name="Log Name"/>
+        <set-payload value="&lt;body&gt;  
+	&lt;table border=&quot;5&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;600&quot;&gt;  
+		&lt;tr&gt;  
+			&lt;td bgcolor=&quot;F06829&quot;&gt;  
+				&lt;center&gt;  
+					&lt;h1&gt;&lt;b&gt;  Revature - Texas Mule    &lt;/b&gt;  &lt;/h1&gt;  
+					&lt;h2&gt;  Field Trip Planner  &lt;/h2&gt;  
+				&lt;/center&gt;  
+			&lt;/td&gt;  
+		&lt;/tr&gt; 
+		&lt;tr&gt;  
+			&lt;td bgcolor=&quot;#ffffff&quot;&gt;  Thank you for planning a field trip using the Texas Mule Field Trip Planner!&lt;br&gt;&lt;br&gt;    
+				Below, you will find the information for your planned trip&lt;br&gt;&lt;br&gt;   
+
+				Facility Information:	&lt;br&gt;
+				#[sessionVars.event_info]    &lt;br&gt;&lt;br&gt;
+				Food Information:	&lt;br&gt;
+				Name: #[sessionVars.food_name]	&lt;br&gt;
+				Address: #[sessionVars.food_address]&lt;br&gt;
+				Price Level: #[sessionVars.food_price]&lt;br&gt;
+				Vehicle Information: &lt;br&gt;
+				#[sessionVars.vehicle_info]
+				&lt;br&gt;&lt;br&gt;    
+
+				Sincerely,&lt;br&gt;    
+				The Texas Mule team    
+			&lt;/td&gt;  
+		&lt;/tr&gt; 
+	&lt;/table&gt; 
+&lt;/body&gt;" doc:name="Set Email Payload"/>
+
+        <smtp:outbound-endpoint host="smtp.gmail.com" port="587" user="tmfieldtrip@gmail.com" password="revature" connector-ref="Gmail" to="tmfieldtrip@gmail.com" from="tmfieldtrip@gmail.com" subject="Itinerary" responseTimeout="10000" doc:name="Send that shit"/>
+    </flow>
+    <sub-flow name="FoodInfo">
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="food_info" doc:name="Retrieve Food Info"/>
+        <set-variable variableName="food_info" value="#[payload]" mimeType="application/json" doc:name="Set Food Info Variable"/>
+        <set-session-variable variableName="food_name" value="#[json:name]" doc:name="Extract Name"/>
+        <set-session-variable variableName="food_address" value="#[json:address]" doc:name="Extract Address"/>
+        <set-session-variable variableName="food_price" value="#[json:price_level]" doc:name="Extract Price"/>
+    </sub-flow>
+    <flow name="searchEvents">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/{feat}" allowedMethods="GET" doc:name="HTTP"/>
+        <http:request config-ref="Event_APIConnection" path="/search/{feat}" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="feat" value="#[message.inboundProperties.'http.uri.params'.feat]"/>
+            </http:request-builder>
+        </http:request>
+    </flow>
+    <flow name="SetEvent">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/{event_name}" allowedMethods="POST" doc:name="HTTP"/>
+        <set-session-variable variableName="students" value="#[message.payload.students]" doc:name="Students"/>
+        <set-session-variable variableName="chaperones" value="#[message.payload.chaperones]" doc:name="Chaperones"/>
+        <set-variable variableName="eventName" value="#[message.inboundProperties.'http.uri.params'.event_name]" doc:name="Event Name"/>
+
+        <http:request config-ref="Event_APIConnection" path="/{name}" method="GET" doc:name="Get Information About Event" metadata:id="dbf22ee6-646d-4800-b443-74fd0211a107" requestStreamingMode="ALWAYS">
+            <http:request-builder>
+                <http:uri-param paramName="name" value="#[flowVars.eventName]"/>
+
+            </http:request-builder>
+        </http:request>
+        <set-session-variable variableName="event_info" value="#[payload]" mimeType="application/json" doc:name="event"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <set-payload value="#[payload.address]+#[payload.city]+#[payload.state]" mimeType="application/json" doc:name="Set Payload"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <flow-ref name="SUBFLOW:CalculateGeoCoords" doc:name="SUBFLOW:CalculateGeoCoords"/>
+    </flow>
+    <sub-flow name="SUBFLOW:CalculateGeoCoords">
+        <http:request config-ref="GoogleGeoCoords" path="/json" method="GET" doc:name="Google Geocode API">
+            <http:request-builder>
+                <http:query-param paramName="address" value="#[payload]"/>
+                <http:query-param paramName="key" value="AIzaSyCcRZDChd6Qf4PVLgaYL2GZ4SjCYyvSvKU"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message" metadata:id="f5a03728-ac47-432b-be96-3e6266a6de5e">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0][0].geometry.location]]></dw:set-payload>
+            <dw:set-session-variable variableName="lat"><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0][0].geometry.location.lat]]></dw:set-session-variable>
+            <dw:set-session-variable variableName="lng"><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0][0].geometry.location.lng]]></dw:set-session-variable>
+        </dw:transform-message>
+        <logger message="(#[sessionVars.lat], #[sessionVars.lng])" level="INFO" doc:name="Logger"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+    <sub-flow name="SetPrebuiltLocationTODORemove">
+        <set-session-variable variableName="location" value="{&quot;lat&quot;:32.7405294,&quot;lng&quot;:-96.81624099999999}" doc:name="Set location" mimeType="application/json"/>
+    </sub-flow>
+    <flow name="searchFood">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/food" allowedMethods="GET" doc:name="HTTP"/>
+        <flow-ref name="SetPrebuiltLocationTODORemove" doc:name="set location"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	"lat":sessionVars.location[0],
+	"lng":sessionVars.location[1]
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="Food_APIConnection" path="/search" method="POST" doc:name="Get Food Options"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="SetFood">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/food/{name}" allowedMethods="GET" doc:name="HTTP"/>
+        <set-variable variableName="food_name" value="#[message.inboundProperties.'http.uri.params'.name]" doc:name="Variable"/>
+        <http:request config-ref="Food_APIConnection" path="/{name}" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="name" value="#[flowVars.food_name]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0]]]></dw:set-payload>
+            <dw:set-variable variableName="foodinfo"><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0]]]></dw:set-variable>
+        </dw:transform-message>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="food_info" value-ref="#[flowVars.foodinfo]" doc:name="Store FoodInfo" overwrite="true"/>
+    </flow>
+    <flow name="project2muleFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
+    </flow>
+    <flow name="objectstoretest">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/test" allowedMethods="POST" parseRequest="false" doc:name="HTTP" metadata:id="6a93d7b8-a46b-4f0b-9ec9-8e7bb52c4f6c"/>
+        <set-variable variableName="testflowvar" value="{&quot;testkey&quot;:&quot;testvalue&quot;, &quot;testkey2&quot;:&quot;testvalue2&quot;}" mimeType="application/json" doc:name="Variable"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="testflowvarkey" value-ref="#[flowVars.testflowvar]" overwrite="true" doc:name="Store"/>
+    </flow>
+    <flow name="objectstoreretrieve">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/test2" allowedMethods="GET" doc:name="HTTP"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="testflowvarkey" doc:name="Retrieve"/>
+        <logger message="#[json:testkey]" level="INFO" doc:name="Logger"/>
+    </flow>
+
+</mule>
