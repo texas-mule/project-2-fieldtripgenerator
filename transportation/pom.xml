@@ -12,6 +12,11 @@
 		<version>2.1.4.RELEASE</version>
 	</parent>
 
+	<properties>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<java.version>1.8</java.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -37,10 +42,6 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
-
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
 
 	<build>
 		<plugins>
