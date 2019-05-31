@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,16 @@ public class VehicleController {
   public double estimate (@RequestParam(value = "distance") double distance, @RequestParam(value = "gascost") double gascost) {
     return vehicleservice.estimate(distance, gascost, cachedvehicles);
   }
+  
+  @GetMapping("/id/{id}")
+  public Vehicle getvehiclebyid (@PathVariable(value = "id") int id) {
+    return vehicleservice.getvehiclebyid(id);
+  }
+  
+  @GetMapping("/licenseplate/{licenseplate}")
+  public Vehicle getvehiclebylicenseplate (@PathVariable(value = "licenseplate") String licenseplate) {
+    return vehicleservice.getvehiclebylicenseplate(licenseplate);
+  } 
 
   @GetMapping("/test")
   public String test() {
@@ -47,15 +58,15 @@ public class VehicleController {
 
   @GetMapping("/testvehicle")
   public Vehicle vehicle(@RequestParam(value = "id") int id,
-      @RequestParam(value = "license_plate") String license_plate,
-      @RequestParam(value = "registration_number") String registration_number,
+      @RequestParam(value = "licenseplate") String licenseplate,
+      @RequestParam(value = "registrationnumber") String registrationnumber,
       @RequestParam(value = "owner") String owner,
-      @RequestParam(value = "overall_mileage") int overall_mileage,
-      @RequestParam(value = "total_seats") int total_seats,
-      @RequestParam(value = "average_mpg") double average_mpg,
+      @RequestParam(value = "overallmileage") int overallmileage,
+      @RequestParam(value = "totalseats") int totalseats,
+      @RequestParam(value = "averagempg") double averagempg,
       @RequestParam(value = "availability") boolean availability) {
-    return new Vehicle(id, license_plate, registration_number, owner,
-        overall_mileage, total_seats, average_mpg, availability);
+    return new Vehicle(id, licenseplate, registrationnumber, owner,
+        overallmileage, totalseats, averagempg, availability);
   }
 
 }

@@ -17,6 +17,17 @@ public class VehicleService {
   public List<Vehicle> getAllVehicles() {
     return this.vehiclerepository.findAll();
   }
+  
+  @Transactional
+  public Vehicle getvehiclebyid (int id) {
+    return this.vehiclerepository.findById(id);
+  }
+  
+  @Transactional
+  public Vehicle getvehiclebylicenseplate (String licenseplate) {
+    return this.vehiclerepository.findByLicenseplate(licenseplate);
+  }
+  
 
   @Transactional
   public List<Vehicle> unoptimize(int passengers, List<Vehicle> vehiclestable) {
@@ -28,7 +39,7 @@ public class VehicleService {
     for (Vehicle vehiclerow : vehiclestable) {
       if (vehiclerow.getAvailability()) {
         availablevehicles.add(vehiclerow);
-        totalvehiclecapacity += vehiclerow.getTotal_seats();
+        totalvehiclecapacity += vehiclerow.getTotalseats();
       }
     }
 
@@ -41,13 +52,13 @@ public class VehicleService {
         int highestcapacity = 0;
         Vehicle tempvehicle = null;
         for (Vehicle vehicle : availablevehicles) {
-          if (vehicle.getTotal_seats() > highestcapacity) {
-            highestcapacity = vehicle.getTotal_seats();
+          if (vehicle.getTotalseats() > highestcapacity) {
+            highestcapacity = vehicle.getTotalseats();
             tempvehicle = vehicle;
           }
         }
         reservedvehicles.add(tempvehicle);
-        passengersleft -= tempvehicle.getTotal_seats();
+        passengersleft -= tempvehicle.getTotalseats();
         availablevehicles.remove(tempvehicle);
       }
       return reservedvehicles;
@@ -68,7 +79,7 @@ public class VehicleService {
     for (Vehicle vehiclerow : vehiclestable) {
       if (vehiclerow.getAvailability()) {
         availablevehicles.add(vehiclerow);
-        totalvehiclecapacity += vehiclerow.getTotal_seats();
+        totalvehiclecapacity += vehiclerow.getTotalseats();
       }
     }
 
@@ -81,7 +92,7 @@ public class VehicleService {
         double highestcapacityscore = 0.0;
         Vehicle tempvehicle = null;
         for (Vehicle vehicle : availablevehicles) {
-          if (vehicle.getTotal_seats() > passengersleft) {
+          if (vehicle.getTotalseats() > passengersleft) {
             finalvehicles = true;
             if (finalvehicles) {
               finalpasses++;
@@ -90,38 +101,38 @@ public class VehicleService {
               segmentvehicles.add(vehicle);
             }
             if (passengersleft
-                * vehicle.getAverage_mpg() > highestcapacityscore) {
+                * vehicle.getAveragempg() > highestcapacityscore) {
               tempvehicle = vehicle;
-              highestcapacityscore = passengersleft * vehicle.getAverage_mpg();
+              highestcapacityscore = passengersleft * vehicle.getAveragempg();
             }
           } else {
-            if (vehicle.getTotal_seats()
-                * vehicle.getAverage_mpg() > highestcapacityscore) {
+            if (vehicle.getTotalseats()
+                * vehicle.getAveragempg() > highestcapacityscore) {
               tempvehicle = vehicle;
-              highestcapacityscore = vehicle.getTotal_seats()
-                  * vehicle.getAverage_mpg();
+              highestcapacityscore = vehicle.getTotalseats()
+                  * vehicle.getAveragempg();
             }
           }
         }
         if (!finalvehicles) {
           reservedvehicles.add(tempvehicle);
-          passengersleft -= tempvehicle.getTotal_seats();
+          passengersleft -= tempvehicle.getTotalseats();
           availablevehicles.remove(tempvehicle);
         } else {
           sugestedvehicles.add(tempvehicle);
-          passengersleft -= tempvehicle.getTotal_seats();
+          passengersleft -= tempvehicle.getTotalseats();
           availablevehicles.remove(tempvehicle);
         }
       }
       double sugestedvehiclesgallons = 0.0;
       for (Vehicle vehicle : sugestedvehicles) {
-        sugestedvehiclesgallons += 1000 / vehicle.getAverage_mpg();
+        sugestedvehiclesgallons += 1000 / vehicle.getAveragempg();
       }
-      double segmentvehiclelowestgallons =  1000 / segmentvehicles.get(0).getAverage_mpg();
+      double segmentvehiclelowestgallons =  1000 / segmentvehicles.get(0).getAveragempg();
       Vehicle tempvehicle = segmentvehicles.get(0);
       for (Vehicle vehicle : segmentvehicles) {
-        if (segmentvehiclelowestgallons < 1000 / vehicle.getAverage_mpg()) {
-          segmentvehiclelowestgallons = 1000 / vehicle.getAverage_mpg();
+        if (segmentvehiclelowestgallons < 1000 / vehicle.getAveragempg()) {
+          segmentvehiclelowestgallons = 1000 / vehicle.getAveragempg();
           tempvehicle = vehicle;
         }
       }
@@ -141,7 +152,7 @@ public class VehicleService {
       List<Vehicle> vehiclestable) {
     double estimatecost = 0.0;
     for (Vehicle vehicle : vehiclestable) {
-      double estimatedgallonsfortrip = distances / vehicle.getAverage_mpg();
+      double estimatedgallonsfortrip = distances / vehicle.getAveragempg();
       estimatecost += estimatedgallonsfortrip * gascost;
     }
     return estimatecost;
