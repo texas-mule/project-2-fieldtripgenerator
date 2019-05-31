@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class VehicleService {
@@ -53,4 +54,16 @@ public class VehicleService {
       return reservedvehicles;
     }
   }
+  
+  @Transactional
+  public double estimate (double distances, double gascost, List<Vehicle> vehiclestable) {
+   double estimatecost = 0.0;
+    for (Vehicle vehicle : vehiclestable) {
+      double estimatedgallonsfortrip = distances / vehicle.getAverage_mpg();
+      estimatecost += estimatedgallonsfortrip * gascost;
+    }
+    return estimatecost;
+  }
+
+  
 }

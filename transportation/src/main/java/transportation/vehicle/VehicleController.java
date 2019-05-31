@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/vehicle")
 public class VehicleController {
+  
+  List<Vehicle> cachedvehicles = new ArrayList<Vehicle>();
 
   @Autowired
   VehicleService vehicleservice;
@@ -23,13 +25,14 @@ public class VehicleController {
   
   @GetMapping("/unoptimize")
   public List<Vehicle> unoptimize(@RequestParam(value = "passengers") int passengers) {
-   return vehicleservice.unoptimize(passengers, getAll());
+    cachedvehicles = vehicleservice.unoptimize(passengers, getAll());
+    return cachedvehicles;
   }
   
-//  @GetMapping("/estimate")
-//  public double estimate (List<Vehicle> vehiclestable, double distances) {
-//    
-//  }
+  @GetMapping("/estimate")
+  public double estimate (@RequestParam(value = "distance") double distance, @RequestParam(value = "gascost") double gascost) {
+    return vehicleservice.estimate(distance, gascost, cachedvehicles);
+  }
   
   @GetMapping("/optimize")
   public List<Vehicle> optimize(
