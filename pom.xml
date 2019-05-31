@@ -16,7 +16,7 @@
     <modules>
         <module>facility-spring-boot/pom.xml</module>            
         <!-- <module>food-app/pom.xml</module>              -->
-        <!-- <module>transportation-app/pom.xml</module>    -->
+        <module>transportation/pom.xml</module>
         <!-- <module>mule-app/pom.xml</module>              -->
     </modules>
     
