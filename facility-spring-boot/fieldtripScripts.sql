@@ -23,7 +23,7 @@ WITH (
 TABLESPACE pg_default;
 
 ALTER TABLE public.admissions
-    OWNER to postgres;
+    OWNER to team;
 
 
 
@@ -124,7 +124,7 @@ WITH (
 TABLESPACE pg_default;
 
 ALTER TABLE public.information
-    OWNER to postgres;
+    OWNER to team;
 
 
 INSERT INTO public."information"(
@@ -236,7 +236,7 @@ WITH (
 TABLESPACE pg_default;
 
 ALTER TABLE public."facilities"
-    OWNER to postgres;
+    OWNER to team;
 
 
 
