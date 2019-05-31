@@ -29,56 +29,15 @@ public class VehicleController {
     return cachedvehicles;
   }
   
+  @GetMapping("/optimize")
+  public List<Vehicle> optimize(@RequestParam(value = "passengers") int passengers) {
+   cachedvehicles = vehicleservice.optimize(passengers, getAll());
+   return cachedvehicles;
+  }
+  
   @GetMapping("/estimate")
   public double estimate (@RequestParam(value = "distance") double distance, @RequestParam(value = "gascost") double gascost) {
     return vehicleservice.estimate(distance, gascost, cachedvehicles);
-  }
-  
-  @GetMapping("/optimize")
-  public List<Vehicle> optimize(
-      @RequestParam(value = "passengers") int passengers) {
-    int passengersleft = passengers;
-    int totalbuscapacity = 0;
-    List<Vehicle> vehiclestable = vehicleservice.getAllVehicles();
-    ArrayList<Vehicle> availablevehicles = new ArrayList<Vehicle>();
-    List<Integer> bestbusesindex = new ArrayList<Integer>();
-    for (Vehicle vehiclerow : vehiclestable) {
-      if (vehiclerow.getAvailability()) {
-        availablevehicles.add(vehiclerow);
-        totalbuscapacity += vehiclerow.getTotal_seats();
-      }
-    }
-    if (passengers > totalbuscapacity) {
-      return null;
-    } else {
-      while (passengersleft > 0) {
-        int index = 0;
-        int indexofhighest = 0;
-        double highestcalculation = 0;
-        for (Vehicle vehicleobject : availablevehicles) {
-          if (vehicleobject.getTotal_seats() > passengersleft) {
-            if ((passengersleft*vehicleobject.getAverage_mpg()) > highestcalculation) {
-              indexofhighest = index;
-              highestcalculation = passengersleft*vehicleobject.getAverage_mpg();
-            }
-          } else {
-            if ((vehicleobject.getTotal_seats()*vehicleobject.getAverage_mpg()) > highestcalculation) {
-              indexofhighest = index;
-              highestcalculation = vehicleobject.getTotal_seats()*vehicleobject.getAverage_mpg();
-            }
-          }
-          index++;
-        }
-        bestbusesindex.add(indexofhighest);
-        availablevehicles.remove(indexofhighest);
-        passengersleft -= vehiclestable.get(indexofhighest).getTotal_seats();
-      }
-      List<Vehicle> bestbuses = new ArrayList<Vehicle>();
-      for (Integer index : bestbusesindex) {
-        bestbuses.add(vehiclestable.get(index));       
-      }
-      return bestbuses;
-    }
   }
 
   @GetMapping("/test")
