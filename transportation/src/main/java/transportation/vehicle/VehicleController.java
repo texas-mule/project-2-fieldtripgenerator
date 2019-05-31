@@ -20,7 +20,17 @@ public class VehicleController {
   public List<Vehicle> getAll() {
     return vehicleservice.getAllVehicles();
   }
-
+  
+  @GetMapping("/unoptimize")
+  public List<Vehicle> unoptimize(@RequestParam(value = "passengers") int passengers) {
+   return vehicleservice.unoptimize(passengers, getAll());
+  }
+  
+//  @GetMapping("/estimate")
+//  public double estimate (List<Vehicle> vehiclestable, double distances) {
+//    
+//  }
+  
   @GetMapping("/optimize")
   public List<Vehicle> optimize(
       @RequestParam(value = "passengers") int passengers) {
@@ -29,7 +39,6 @@ public class VehicleController {
     List<Vehicle> vehiclestable = vehicleservice.getAllVehicles();
     ArrayList<Vehicle> availablevehicles = new ArrayList<Vehicle>();
     List<Integer> bestbusesindex = new ArrayList<Integer>();
-
     for (Vehicle vehiclerow : vehiclestable) {
       if (vehiclerow.getAvailability()) {
         availablevehicles.add(vehiclerow);
@@ -61,7 +70,6 @@ public class VehicleController {
         availablevehicles.remove(indexofhighest);
         passengersleft -= vehiclestable.get(indexofhighest).getTotal_seats();
       }
-
       List<Vehicle> bestbuses = new ArrayList<Vehicle>();
       for (Integer index : bestbusesindex) {
         bestbuses.add(vehiclestable.get(index));       
