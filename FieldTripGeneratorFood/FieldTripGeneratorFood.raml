@@ -1,0 +1,81 @@
+#%RAML 0.8
+---
+title: FieldTripGeneratorFood API
+baseUri: http://localhost:8080
+version: v1
+
+/food:
+    /search:
+        post:
+            body:
+                application/json:
+                    example: |
+                        {"lat": 32.74059294,
+                        "lng": -96.8162409999999
+                        }
+            description: Gets the five closests restaurants to the given coordinates
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                [
+                                    {"name": "Restaurant",
+                                    "rating": "5.0",
+                                    "price_level": "1.",
+                                    "address": "100 Road rd, City",
+                                    "location": {"lat": 45.0,
+                                                "lng": 45.0
+                                                }
+                                    },
+                                    {"name": "Restaurant",
+                                    "rating": "5.0",
+                                    "price_level": "1.",
+                                    "address": "100 Road rd, City",
+                                    "location": {"lat": 45.0,
+                                                "lng": 45.0
+                                                }
+                                    },
+                                    {"name": "Restaurant",
+                                    "rating": "5.0",
+                                    "price_level": "1.",
+                                    "address": "100 Road rd, City",
+                                    "location": {"lat": 45.0,
+                                                "lng": 45.0
+                                                }
+                                    },
+                                    {"name": "Restaurant",
+                                    "rating": "5.0",
+                                    "price_level": "1.",
+                                    "address": "100 Road rd, City",
+                                    "location": {"lat": 45.0,
+                                                "lng": 45.0
+                                                }
+                                    },
+                                    {"name": "Restaurant",
+                                    "rating": "5.0",
+                                    "price_level": "1.",
+                                    "address": "100 Road rd, City",
+                                    "location": {"lat": 45.0,
+                                                "lng": 45.0
+                                                }
+                                    }
+    /{name}:
+        get:
+            body:
+                application/json:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                [
+                                    {"name": "Restaurant",
+                                    "rating": "5.0",
+                                    "price_level": "1.",
+                                    "address": "100 Road rd, City",
+                                    "location": {"lat": 45.0,
+                                                "lng": 45.0
+                                                }
+                                    }
+                                ]

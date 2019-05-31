@@ -24,11 +24,11 @@ public class FoodController {
 	@Autowired
 	FoodService foodService;
 
-	@Deprecated
+	/*@Deprecated
 	@GetMapping
 	public Collection<Food> getAll() {
 		return foodService.getAllFood();
-	}
+	}*/
 
 	@PostMapping(path = "/search", consumes = "application/json", produces = "application/json")
 	public Collection<Food> get(@RequestBody Coordinate coord) {
