@@ -38,7 +38,7 @@ public class VehicleController {
 
 	@GetMapping("/estimate")
 	public double estimate(@RequestParam(value = "lat1") double lat1, @RequestParam(value = "lat2") double lat2,
-			@RequestParam(value = "lng1") double lng1, @RequestParam(value = "lng1") double lng2,
+			@RequestParam(value = "lng1") double lng1, @RequestParam(value = "lng2") double lng2,
 			@RequestParam(value = "gascost") double gascost) {
 		return vehicleservice.estimate(lat1, lat2, lng1, lng2, gascost, cachedvehicles);
 	}
