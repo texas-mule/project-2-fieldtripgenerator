@@ -150,13 +150,14 @@ public class VehicleService {
   @Transactional
   public double estimate(double lat1, double lat2, double lng1, double lng2, double gascost,
       List<Vehicle> vehiclestable) {
-	  double distance;
-	  distance = Math.sqrt(Math.pow((lat2-lat1)*68.703,2)+Math.pow((lng2-lng1)*68.703,2));
-    double estimatecost = 0.0;
-    for (Vehicle vehicle : vehiclestable) {
-      double estimatedgallonsfortrip = distance / vehicle.getAveragempg();
-      estimatecost += estimatedgallonsfortrip * gascost;
-    }
+  	double distance;
+	distance = Math.sqrt(Math.pow((lat2-lat1)*68.703,2)+Math.pow((lng2-lng1)*68.703,2));
+    	double estimatecost = 0.0;
+	double estimatedgallonsfortrip;
+    	for (Vehicle vehicle : vehiclestable) {
+      		estimatedgallonsfortrip = distance / vehicle.getAveragempg();
+      		estimatecost += estimatedgallonsfortrip * gascost;
+    	}
     return estimatecost;
   }
 
