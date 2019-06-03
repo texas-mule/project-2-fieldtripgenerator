@@ -22,7 +22,7 @@ http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/
     <http:request-config name="GoogleGeoCode" protocol="HTTPS" host="maps.googleapis.com" port="443" basePath="/maps/api/geocode" doc:name="HTTP Request Configuration"/>
     <http:request-config name="Food_APIConnection" host="104.155.137.93" port="8080" basePath="/FieldTripGeneratorFood/food" doc:name="HTTP Request Configuration"/>
     <http:request-config name="TransportationVehicle_APIConfiguration" host="104.155.137.93" port="8080" basePath="/transportation/vehicle" doc:name="HTTP Request Configuration"/>
-    <twilio:config name="Twilio__Basic_Authentication" username="AC6e93abc22bc13f1df51653f2dd26fbbc" password="073b9c169b7f0ace4740524af65bf93d" doc:name="Twilio: Basic Authentication"/>
+    <twilio:config name="Twilio__Basic_Authentication" username="" password="" doc:name="Twilio: Basic Authentication"/>
     
   
     <flow name="SendItinerary">
