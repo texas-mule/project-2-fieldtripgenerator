@@ -47,6 +47,7 @@ public class InformationService {
 		List<Information> info = new ArrayList<>();
 		Query query = em.createNamedQuery("getAllInfo", Information.class);
 		info = query.getResultList();
+		em.close();
 
 		return info;
 	}

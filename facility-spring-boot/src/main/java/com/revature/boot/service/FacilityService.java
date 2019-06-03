@@ -54,6 +54,7 @@ public class FacilityService {
 		Query query = em.createNamedQuery("searchFacilityByName", Facility.class);
 		query.setParameter("name", name);
 		facilities = query.getResultList();
+		em.close();
 
 		return facilities;
 	}
@@ -65,6 +66,7 @@ public class FacilityService {
 		Query query = em.createNamedQuery("searchFeature", Facility.class);
 		query.setParameter("feat", feature);
 		facilities = query.getResultList();
+		em.close();
 
 		return facilities;
 	}
@@ -76,6 +78,7 @@ public class FacilityService {
 		Query query = em.createNamedQuery("search", Facility.class);
 		query.setParameter("feat", feature);
 		facilities = query.getResultList();
+		em.close();
 
 		return facilities;
 	}
@@ -86,6 +89,7 @@ public class FacilityService {
 		Query query = em.createNamedQuery("getContactInfoByName");
 		query.setParameter("name", name);
 		info = (Information) query.getSingleResult();
+		em.close();
 
 		return info;
 	}
@@ -100,6 +104,7 @@ public class FacilityService {
 		for(Object[] a : addr) {
 			address = a[0] + " " + a[1] + ", " + a[2] + " " + a[3];
 		}
+		em.close();
 		return address;
 	}
 	
@@ -107,6 +112,7 @@ public class FacilityService {
 	public String getAddress(String name) {
 		Query query = em.createNamedQuery("getAddress");
 		query.setParameter("name", name);
+		em.close();
 		return query.getSingleResult().toString();
 	}
 	
@@ -114,6 +120,7 @@ public class FacilityService {
 	public String getCity(String name) {
 		Query query = em.createNamedQuery("getCity");
 		query.setParameter("name", name);
+		em.close();
 		return query.getSingleResult().toString();
 	}
 	
@@ -121,12 +128,14 @@ public class FacilityService {
 	public String getState(String name) {
 		Query query = em.createNamedQuery("getState");
 		query.setParameter("name", name);
+		em.close();
 		return query.getSingleResult().toString();
 	}
 	@Transactional
 	public String getZip(String name) {
 		Query query = em.createNamedQuery("getZip");
 		query.setParameter("name", name);
+		em.close();
 		return query.getSingleResult().toString();
 	}
 	
@@ -134,6 +143,7 @@ public class FacilityService {
 	public long getPhone(String name) {
 		Query query = em.createNamedQuery("getPhone");
 		query.setParameter("name", name);
+		em.close();
 		return (long) query.getSingleResult();
 	}
 	
@@ -141,18 +151,21 @@ public class FacilityService {
 	public String getWebsite(String name) {
 		Query query = em.createNamedQuery("getWebsite");
 		query.setParameter("name", name);
+		em.close();
 		return query.getSingleResult().toString();
 	}
 	@Transactional
 	public double getChildPrice(String name) {
 		Query query = em.createNamedQuery("getChildPrice");
 		query.setParameter("name", name);
+		em.close();
 		return (double) query.getSingleResult();
 	}
 	@Transactional
 	public double getAdultPrice(String name) {
 		Query query = em.createNamedQuery("getAdultPrice");
 		query.setParameter("name", name);
+		em.close();
 		return (double) query.getSingleResult();
 	}
 	
