@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "string"
+    },
+    "price_level": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lng": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lng"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "rating",
+    "price_level",
+    "address",
+    "location"
+  ]
+}

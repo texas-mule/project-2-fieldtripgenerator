@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "integer"
+    },
+    "visiting_info": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "hours": {
+          "type": "string"
+        },
+        "admission": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "babyAge": {
+              "type": "string"
+            },
+            "babyPrice": {
+              "type": "number"
+            },
+            "childAge": {
+              "type": "string"
+            },
+            "childPrice": {
+              "type": "number"
+            },
+            "adultAge": {
+              "type": "string"
+            },
+            "adultPrice": {
+              "type": "number"
+            },
+            "seniorAge": {
+              "type": "string"
+            },
+            "seniorPrice": {
+              "type": "number"
+            },
+            "veteranPrice": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "id",
+            "babyAge",
+            "babyPrice",
+            "childAge",
+            "childPrice",
+            "adultAge",
+            "adultPrice",
+            "seniorAge",
+            "seniorPrice",
+            "veteranPrice"
+          ]
+        },
+        "phone_num": {
+          "type": "integer"
+        },
+        "web_site": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "hours",
+        "admission",
+        "phone_num",
+        "web_site"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "address",
+    "city",
+    "state",
+    "zip",
+  ]
+}

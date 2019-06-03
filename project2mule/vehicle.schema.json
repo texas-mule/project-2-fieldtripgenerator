@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "licenseplate": {
+      "type": "string"
+    },
+    "registrationnumber": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "overallmileage": {
+      "type": "integer"
+    },
+    "totalseats": {
+      "type": "integer"
+    },
+    "averagempg": {
+      "type": "number"
+    },
+    "availability": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "licenseplate",
+    "registrationnumber",
+    "owner",
+    "overallmileage",
+    "totalseats",
+    "averagempg",
+    "availability"
+  ]
+}

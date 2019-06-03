@@ -1,0 +1,22 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "food"
+        }
+    },
+    "outputMessageMetadata": {
+        "flowVariables": {
+            "food_lng": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "lng"
+            },
+            "food_lat": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "lat"
+            }
+        }
+    },
+    "id": "44473bd9-ae2e-4519-8b07-c3efd7c567a5",
+    "version": "5.2.0.0"
+}

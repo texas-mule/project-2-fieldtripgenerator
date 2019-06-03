@@ -1,0 +1,13 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "sessionVariables": {
+            "totalcost": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "cost"
+            }
+        }
+    },
+    "id": "8ce72dd3-4b3e-4e38-b5f6-d7f6f6796d77",
+    "version": "5.2.0.0"
+}

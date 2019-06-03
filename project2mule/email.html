@@ -1,30 +1,84 @@
-<body>  
-	<table border="5" cellpadding="0" cellspacing="0" width="600">  
-		<tr>  
-			<td bgcolor="F06829">  
-				<center>  
-					<h1><b>  Revature - Texas Mule    </b>  </h1>  
-					<h2>  Field Trip Planner  </h2>  
-				</center>  
-			</td>  
-		</tr> 
-		<tr>  
-			<td bgcolor="#ffffff">  Thank you for planning a field trip using the Texas Mule Field Trip Planner!<br><br>    
-				Below, you will find the information for your planned trip<br><br>   
-
-				Facility Information:	<br>
-				#[sessionVars.event_info]    <br><br>
-				Food Information:	<br>
-				Name: #[sessionVars.food_name]	<br>
-				Address: #[sessionVars.food_address]<br>
-				Price Level: #[sessionVars.food_price]<br>
-				Vehicle Information: <br>
-				#[sessionVars.vehicle_info]
-				<br><br>    
-
-				Sincerely,<br>    
-				The Texas Mule team    
-			</td>  
-		</tr> 
-	</table> 
+<html>
+<body style="margin: 0; padding: 0;">
+ <table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
+  		<tr bgcolor="#f26925" style="padding: 5px 0 5px 0;">
+          <td>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Bus-logo.svg" alt="Revature - Texas Mule" width="300" style="display: block;" />
+          </td>
+          <td style="color: #000000; font-family: helvetica, sans-serif; font-size: 28px;">
+              <img src="https://revature.com/wp-content/uploads/2018/06/LGBT-logo-5-1.png" width="300"><br><br>Field Trip Planner
+          </td>
+	 	</tr>
+	 	<tr>
+		 	<tr>
+		  		<td style="padding: 20px 0 30px 0;">
+		   			Thank you for planning a field trip using the <b>Texas Mule Field Trip Planner!</b>
+		  		</td>
+		 	</tr>
+		 	<tr>
+		  		<td>
+		   			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		   				<tr>
+		   					<td style="color: red; padding: 10px 0 10px 0;">
+								<b>Detail information of your planned trip.</b>
+							</td>
+						</tr>
+						<tr>
+			  				<td width="260" valign="top">
+			  					<fieldset>
+			  						<label><b>Facility Information:</b></label> 
+                                    <br>Event Facility: #[sessionVars.event_info.name]<br>
+                                    Estimated Price #[sessionVars.event_price]<br><br>
+				                	<label><b>Food Information:</b></label><br>
+                                    <br>Restaurant: #[sessionVars.food_info.name]
+                                    <br>Price Level: #[sessionVars.food_info.price_level]<br><br>
+				                	<label><b>Vehicle Information:</b></label> #[sessionVars.vehicle_info]<br><br>
+				                	<label><b>Name:</b></label> #[sessionVars.food_name]<br><br>
+				                	<label><b>Address:</b></label> #[sessionVars.food_address]<br><br>
+				                	<label><b>Price Level:</b></label> #[sessionVars.food_price]
+				                </fieldset>
+					        </td>
+					    </tr>
+					  </table>
+				</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+					
+					
+					        
+	 <tr>
+	  <td bgcolor="#ee4c50" style="padding: 30px 30px 30px 30px;">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		 <tr>
+			<td style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px;">
+				&reg; Someone, somewhere 2013<br/>
+				<a href="#" style="color: #ffffff;"><font color="#ffffff">Unsubscribe</font></a> to this newsletter instantly
+			</td>
+			<td align="right">
+				<table border="0" cellpadding="0" cellspacing="0">
+				  <tr>
+				   <td>
+				   	<img src="https://3g4d13k75x47q7v53surz1gi-wpengine.netdna-ssl.com/wp-content/themes/revature/imgs/twitter.svg" alt="Twitter" width="38" height="38" style="display: block;" border="0" >
+				    <!-- <img src="images/tw.gif" alt="Twitter" width="38" height="38" style="display: block;" border="0" /> -->
+				   </td>
+				   <td style="font-size: 0; line-height: 0;" width="20">&nbsp;</td>
+				   <td>
+				   	<img src="https://3g4d13k75x47q7v53surz1gi-wpengine.netdna-ssl.com/wp-content/themes/revature/imgs/facebook-logo.svg" alt="Facebook" width="38" height="38" style="display: block;" border="0">
+				    <!-- <img src="images/fb.gif" alt="Facebook" width="38" height="38" style="display: block;" border="0" /> -->
+				   </td>
+				  </tr>
+				 </table>
+			</td>
+		 </tr>
+		</table>
+	  </td>
+	 </tr>
+	</table>
+   </td>
+  </tr>
+ </table>
 </body>

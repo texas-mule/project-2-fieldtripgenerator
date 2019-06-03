@@ -17,77 +17,182 @@ http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/
     <smtp:gmail-connector name="Gmail" contentType="text/html" validateConnections="true" doc:name="Gmail"/>
     <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration"/>
     <objectstore:config name="ObjectStore__Connector" partition="information" doc:name="ObjectStore: Connector"/>
-    <http:request-config name="Event_APIConnection" host="localhost" port="8080" doc:name="HTTP Request Configuration" basePath="/facilities"/>
+    <http:request-config name="Event_APIConnection" host="localhost" port="8085" doc:name="HTTP Request Configuration" basePath="/facilities"/>
     <http:request-config name="GoogleGeoCoords" protocol="HTTPS" host="maps.googleapis.com" port="443" doc:name="HTTP Request Configuration" basePath="/maps/api/geocode"/>
     <http:request-config name="GoogleGeoCode" protocol="HTTPS" host="maps.googleapis.com" port="443" basePath="/maps/api/geocode" doc:name="HTTP Request Configuration"/>
-    <http:request-config name="Food_APIConnection" host="localhost" port="8080" basePath="/food" doc:name="HTTP Request Configuration"/>
-    <http:request-config name="TransportationVehicle_APIConfiguration" host="localhost" port="8080" basePath="/vehicle" doc:name="HTTP Request Configuration"/>
+    <http:request-config name="Food_APIConnection" host="localhost" port="8083" basePath="/food" doc:name="HTTP Request Configuration"/>
+    <http:request-config name="TransportationVehicle_APIConfiguration" host="localhost" port="8084" basePath="/vehicle" doc:name="HTTP Request Configuration"/>
     <twilio:config name="Twilio__Basic_Authentication" username="AC6e93abc22bc13f1df51653f2dd26fbbc" password="073b9c169b7f0ace4740524af65bf93d" doc:name="Twilio: Basic Authentication"/>
     
   
     <flow name="SendItinerary">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/email" allowedMethods="GET" doc:name="Send Email Test"/>
-        <logger message="payload after retrieve all keys #[payload]" level="INFO" doc:name="Log All Keys"/>
-        <flow-ref name="FoodInfo" doc:name="FoodInfo"/>
-        <logger message="Paylod of Retrieve: #[flowVars.name]" level="INFO" doc:name="Log Name"/>
-        <set-payload value="&lt;body&gt;  
-	&lt;table border=&quot;5&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;600&quot;&gt;  
-		&lt;tr&gt;  
-			&lt;td bgcolor=&quot;F06829&quot;&gt;  
-				&lt;center&gt;  
-					&lt;h1&gt;&lt;b&gt;  Revature - Texas Mule    &lt;/b&gt;  &lt;/h1&gt;  
-					&lt;h2&gt;  Field Trip Planner  &lt;/h2&gt;  
-				&lt;/center&gt;  
-			&lt;/td&gt;  
-		&lt;/tr&gt; 
-		&lt;tr&gt;  
-			&lt;td bgcolor=&quot;#ffffff&quot;&gt;  Thank you for planning a field trip using the Texas Mule Field Trip Planner!&lt;br&gt;&lt;br&gt;    
-				Below, you will find the information for your planned trip&lt;br&gt;&lt;br&gt;   
-
-				Facility Information:	&lt;br&gt;
-				#[sessionVars.event_info]    &lt;br&gt;&lt;br&gt;
-				Food Information:	&lt;br&gt;
-				Name: #[sessionVars.food_name]	&lt;br&gt;
-				Address: #[sessionVars.food_address]&lt;br&gt;
-				Price Level: #[sessionVars.food_price]&lt;br&gt;
-				Vehicle Information: &lt;br&gt;
-				#[sessionVars.vehicle_info]
-				&lt;br&gt;&lt;br&gt;    
-
-				Sincerely,&lt;br&gt;    
-				The Texas Mule team    
-			&lt;/td&gt;  
-		&lt;/tr&gt; 
-	&lt;/table&gt; 
+        <flow-ref name="ParseFoodInfo" doc:name="FoodInfo"/>
+        <flow-ref name="ParseEventInfo" doc:name="EventInfo"/>
+        <flow-ref name="ParseTransportationInfo" doc:name="TransportInfo"/>
+        <dw:transform-message doc:name="Calculate Total Cost">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	plus: sessionVars.event_cost as :number as :string {format:'#.00'} + sessionVars.transport_cost as :number as :string {format:'#.00'}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <set-session-variable variableName="totalcost" value="#[json:plus]" doc:name="Store Total Cost"/>
+        <logger message="Paylod of Retrieve: #[sessionVars.totalcost]" level="INFO" doc:name="Log Total Cost"/>
+        <flow-ref name="CalculatePassengerCount" doc:name="Retrieve Passenger Count"/>
+        <set-session-variable variableName="passengers" value="#[json:sum]" doc:name="Session Variable"/>
+        <set-payload value="&lt;html&gt;
+&lt;body style=&quot;margin: 0; padding: 0;&quot;&gt;
+ &lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;
+  &lt;tr&gt;
+    &lt;table align=&quot;center&quot; border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;600&quot; style=&quot;border-collapse: collapse;&quot;&gt;
+    	&lt;table bgcolor=&quot;#f26925&quot;&gt;
+  		&lt;tr bgcolor=&quot;#f26925&quot; style=&quot;padding: 5px 0 5px 0;&quot;&gt;
+          &lt;td&gt;
+          &lt;img src=&quot;https://img.icons8.com/metro/420/bus.png&quot; alt=&quot;Revature - Texas Mule&quot; height=&quot;300&quot; width=&quot;300&quot; style=&quot;display: block;&quot; /&gt;
+          &lt;/td&gt;
+          &lt;td style=&quot;font-family: helvetica, sans-serif; font-size: 28px;&quot;&gt;
+              &lt;img src=&quot;https://revature.com/wp-content/uploads/2018/06/LGBT-logo-5-1.png&quot; width=&quot;300&quot;&gt;&lt;br&gt;&lt;br&gt;Field Trip Planner
+          &lt;/td&gt;
+	 	&lt;/tr&gt;
+	 	&lt;tr&gt;
+	 	&lt;/tr&gt;
+	 	&lt;/table&gt;
+		 	&lt;tr&gt;
+		  		&lt;td style=&quot;padding: 20px 0 30px 0;&quot;&gt;
+		   			Thank you for planning a field trip using the &lt;b&gt;Texas Mule Field Trip Planner!&lt;/b&gt;
+		  		&lt;/td&gt;
+		 	&lt;/tr&gt;
+		 	&lt;tr&gt;
+		  		&lt;td&gt;
+		   			&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;
+		   				&lt;tr&gt;
+		   					&lt;td style=&quot;color: red; padding: 10px 0 10px 0;&quot;&gt;
+								&lt;b&gt;Detail information of your planned trip.&lt;/b&gt;
+							&lt;/td&gt;
+						&lt;/tr&gt;
+						&lt;tr&gt;
+			  				&lt;td width=&quot;260&quot; valign=&quot;top&quot;&gt;
+			  					&lt;fieldset&gt;
+			  						&lt;h2&gt;&lt;b&gt;Facility Information:&lt;/b&gt;&lt;/h2&gt; 
+                                    &lt;br&gt;&lt;b&gt;Event Facility:&lt;/b&gt; #[sessionVars.event_name]
+                                    &lt;br&gt;&lt;b&gt;Address:&lt;/b&gt; #[sessionVars.event_address]
+                                    &lt;br&gt;&lt;b&gt;Information:&lt;/b&gt; #[sessionVars.event_description]&lt;br&gt;&lt;br&gt;
+				                	&lt;h2&gt;&lt;b&gt;Food Information:&lt;/b&gt;&lt;/h2&gt;
+                                    &lt;br&gt;&lt;b&gt;Restaurant:&lt;/b&gt; #[sessionVars.food_name]
+                                    &lt;br&gt;&lt;b&gt;Address:&lt;/b&gt; #[sessionVars.food_address]
+                                    &lt;br&gt;&lt;b&gt;Price Level:&lt;/b&gt; #[sessionVars.food_price]&lt;br&gt;&lt;br&gt;
+				                	&lt;h2&gt;&lt;b&gt;Vehicle Information:&lt;/b&gt;&lt;/h2&gt; 
+				                	&lt;br&gt;&lt;b&gt;Number of passengers:&lt;/b&gt; #[sessionVars.passengers]
+				                	&lt;br&gt;&lt;b&gt;License Plates:&lt;/b&gt; #[sessionVars.transport_licenses]
+				                	&lt;br&gt;&lt;b&gt;Number of Seats:&lt;/b&gt; #[sessionVars.transport_seats]
+				                	&lt;br&gt;&lt;br&gt;
+				                	&lt;h2&gt;&lt;b&gt;Estimated Cost:&lt;/b&gt;&lt;/h2&gt;
+				                	&lt;br&gt;&lt;h3&gt;$#[sessionVars.totalcost]&lt;/h3&gt;
+				                &lt;/fieldset&gt;
+					        &lt;/td&gt;
+					    &lt;/tr&gt;
+					  &lt;/table&gt;
+				&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;
+		&lt;/td&gt;
+	&lt;/tr&gt;
+					
+					
+					        
+	 &lt;tr&gt;
+	  &lt;td bgcolor=&quot;#ee4c50&quot; style=&quot;padding: 30px 30px 30px 30px;&quot;&gt;
+		&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt;
+		 &lt;tr&gt;
+			&lt;td style=&quot;color: #ffffff; font-family: Arial, sans-serif; font-size: 14px;&quot;&gt;
+				&amp;reg; Revature, Texas-Mule 2019&lt;br/&gt;
+				&lt;a href=&quot;#&quot; style=&quot;color: #ffffff;&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;Unsubscribe&lt;/font&gt;&lt;/a&gt; to this newsletter instantly
+			&lt;/td&gt;
+			&lt;td align=&quot;right&quot;&gt;
+				&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;
+				  &lt;tr&gt;
+				   &lt;td&gt;
+				   	&lt;img src=&quot;https://revature.com/wp-content/uploads/2018/06/LGBT-logo-5-1.png&quot; alt=&quot;Twitter&quot; width=&quot;38&quot; height=&quot;38&quot; style=&quot;display: block;&quot; border=&quot;0&quot; &gt;
+				    &lt;!-- &lt;img src=&quot;images/tw.gif&quot; alt=&quot;Twitter&quot; width=&quot;38&quot; height=&quot;38&quot; style=&quot;display: block;&quot; border=&quot;0&quot; /&gt; --&gt;
+				   &lt;/td&gt;
+				   &lt;td style=&quot;font-size: 0; line-height: 0;&quot; width=&quot;20&quot;&gt;&amp;nbsp;&lt;/td&gt;
+				   &lt;td&gt;
+				   	&lt;img src=&quot;https://3g4d13k75x47q7v53surz1gi-wpengine.netdna-ssl.com/wp-content/themes/revature/imgs/facebook-logo.svg&quot; alt=&quot;Facebook&quot; width=&quot;38&quot; height=&quot;38&quot; style=&quot;display: block;&quot; border=&quot;0&quot;&gt;
+				    &lt;!-- &lt;img src=&quot;images/fb.gif&quot; alt=&quot;Facebook&quot; width=&quot;38&quot; height=&quot;38&quot; style=&quot;display: block;&quot; border=&quot;0&quot; /&gt; --&gt;
+				   &lt;/td&gt;
+				  &lt;/tr&gt;
+				 &lt;/table&gt;
+			&lt;/td&gt;
+		 &lt;/tr&gt;
+		&lt;/table&gt;
+	  &lt;/td&gt;
+	 &lt;/tr&gt;
+	&lt;/table&gt;
+   &lt;/td&gt;
+  &lt;/tr&gt;
+ &lt;/table&gt;
 &lt;/body&gt;" doc:name="Set Email Payload"/>
 
-        <smtp:outbound-endpoint host="smtp.gmail.com" port="587" user="tmfieldtrip@gmail.com" password="revature" connector-ref="Gmail" to="tmfieldtrip@gmail.com" from="tmfieldtrip@gmail.com" subject="Itinerary" responseTimeout="10000" doc:name="Send that shit"/>
-    </flow>
-    <flow name="project2muleFlow">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/send/{toNumber}" doc:name="HTTP" metadata:id="7aa2573e-01d6-4f10-938a-b773e634972f"/>
-        <set-variable variableName="eventName" value="Test Event" doc:name="Set TEST data"/>
+        <smtp:outbound-endpoint host="smtp.gmail.com" port="587" user="tmfieldtrip@gmail.com" password="revature" connector-ref="Gmail" to="tmfieldtrip@gmail.com" from="tmfieldtrip@gmail.com" subject="Itinerary" responseTimeout="10000" doc:name="Send that Email"/>
         <dw:transform-message doc:name="Transform Message">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
 {
 	from: "${fromNumber}",
-	to: inboundProperties."http.uri.params".toNumber,
-	body: "from mule+" ++ flowVars.eventName
+	to: 6303061341,
+	body: "Thank you for planning your trip with TMFieldTripGenerator! Here is the information about your trip. Number of passengers: " ++
+	 sessionVars.passengers ++ ", Event Facility: " ++ sessionVars.event_name ++ "@" ++ 
+	sessionVars.event_address ++ ", Food: " ++ sessionVars.food_name ++ 
+	"@" ++ sessionVars.food_address
 } as :object{
 	class:"org.mule.modules.twilio.pojo.sendmessagerequest.MessageInput"
 }]]></dw:set-payload>
         </dw:transform-message>
         <twilio:send-message config-ref="Twilio__Basic_Authentication" AccountSid="${twilio.accountSid}" doc:name="Twilio"/>
+    </flow>
+    <flow name="sendTextMessage">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/send/{toNumber}" doc:name="HTTP" metadata:id="7aa2573e-01d6-4f10-938a-b773e634972f"/>
+        <set-variable variableName="eventName" value="Test Event" doc:name="Set TEST data"/>
         <logger message="#[payload]" level="INFO" doc:name="Logger"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
     </flow>
-    <sub-flow name="FoodInfo">
+    <sub-flow name="ParseFoodInfo">
         <objectstore:retrieve config-ref="ObjectStore__Connector" key="food_info" doc:name="Retrieve Food Info"/>
         <set-variable variableName="food_info" value="#[payload]" mimeType="application/json" doc:name="Set Food Info Variable"/>
-        <set-session-variable variableName="food_name" value="#[json:name]" doc:name="Extract Name"/>
+        <set-session-variable variableName="food_name" value="#[json:name]" doc:name="Extract Food Name"/>
         <set-session-variable variableName="food_address" value="#[json:address]" doc:name="Extract Address"/>
         <set-session-variable variableName="food_price" value="#[json:price_level]" doc:name="Extract Price"/>
+    </sub-flow>
+    <sub-flow name="ParseEventInfo">
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="event_info" doc:name="Retrieve Event Info"/>
+        <set-variable variableName="event_info" value="" doc:name="Set Event Info Variable"/>
+        <set-session-variable variableName="event_name" value="#[json:name]" doc:name="Extract Event Name"/>
+        <set-session-variable variableName="event_address" value="#[json:address]" doc:name="Extract Event address"/>
+        <set-session-variable variableName="event_description" value="#[json:description]" doc:name="Extract Event Info"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="event_cost" doc:name="Retrieve Event Cost"/>
+        <json:json-to-object-transformer returnClass="java.lang.Double" doc:name="JSON to Object"/>
+        <set-session-variable variableName="event_cost" value="#[payload]" doc:name="Extract Event Cost"/>
+    </sub-flow>
+    <sub-flow name="ParseTransportationInfo">
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="vehicle_info" doc:name="Retrieve Transportation Information"/>
+        <dw:transform-message doc:name="Extract Data from Transport_info" metadata:id="42f57e87-4890-496f-aced-71adf4a8e3a8">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	licenses: payload.licenseplate,
+	seats: payload.totalseats
+}
+]]></dw:set-payload>
+        </dw:transform-message>
+        <set-session-variable variableName="transport_seats" value="#[json:seats]" doc:name="Extract Transportation Seats" mimeType="application/json"/>
+        <set-session-variable variableName="transport_licenses" value="#[json:licenses]" doc:name="Extract Transportation Licenses"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="transportation_cost" doc:name="Retrieve Transportation Cost"/>
+        <set-session-variable variableName="transport_cost" value="#[payload]" doc:name="Extract Transportation Cost"/>
     </sub-flow>
     <flow name="searchEvents">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/{feat}" allowedMethods="GET" doc:name="HTTP"/>
@@ -98,28 +203,42 @@ http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/
         </http:request>
     </flow>
     <flow name="SetEvent">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/{event_name}" allowedMethods="POST" doc:name="HTTP"/>
-        <set-session-variable variableName="students" value="#[message.inboundProperties.'http.query.params'.students]" doc:name="Students"/>
-        <set-session-variable variableName="chaperones" value="#[message.inboundProperties.'http.query.params'.chaperones]" doc:name="Chaperones"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/{event_name}" allowedMethods="POST" doc:name="HTTP" metadata:id="2447c3c1-b5c7-45c4-8499-86a0babfb7e7"/>
+
+        <set-session-variable variableName="students" value="#[json:students]" doc:name="Students"/>
+        <set-session-variable variableName="chaperones" value="#[json:chaperones]" doc:name="Chaperones"/>
         <flow-ref name="SavePassengers" doc:name="SavePassengers"/>
         <set-variable variableName="eventName" value="#[message.inboundProperties.'http.uri.params'.event_name]" doc:name="Event Name"/>
-
-        <http:request config-ref="Event_APIConnection" path="/{name}" method="GET" doc:name="Get Information About Event" metadata:id="dbf22ee6-646d-4800-b443-74fd0211a107" requestStreamingMode="ALWAYS">
+        <flow-ref name="CalculateEventCost" doc:name="Calculate Cost"/>
+        <http:request config-ref="Event_APIConnection" path="/{name}" method="GET" requestStreamingMode="ALWAYS" doc:name="Get Information About Event" metadata:id="dbf22ee6-646d-4800-b443-74fd0211a107">
             <http:request-builder>
                 <http:uri-param paramName="name" value="#[flowVars.eventName]"/>
-
             </http:request-builder>
         </http:request>
-        <set-session-variable variableName="event_info" value="#[payload]" mimeType="application/json" doc:name="event"/>
-        <objectstore:store config-ref="ObjectStore__Connector" key="event_info" value-ref="#[sessionVars.event_info]" doc:name="Store event_info"/>
-        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
-        <set-payload value="#[payload.address]+#[payload.city]+#[payload.state]" mimeType="application/json" doc:name="Set Address to Payload"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-payload>
+            <dw:set-session-variable variableName="event_info"><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-session-variable>
+        </dw:transform-message>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="event_info" value-ref="#[sessionVars.event_info]" overwrite="true" doc:name="Store event_info"/>
+        <set-payload value="#[json:address]+#[json:city]+#[json:state]" mimeType="application/json" doc:name="Set Address to Payload"/>
         <object-to-string-transformer doc:name="Object to String"/>
         <flow-ref name="SUBFLOW:CalculateGeoCoords" doc:name="SUBFLOW:CalculateGeoCoords"/>
+        <response>
+            <set-payload value="Facility location has been set successfully!" doc:name="Set Successfully output"/>
+        </response>
+
+
     </flow>
     <sub-flow name="SavePassengers">
-        <objectstore:store config-ref="ObjectStore__Connector" key="students" value-ref="#[sessionVars.students]" doc:name="Store to students"/>
-        <objectstore:store config-ref="ObjectStore__Connector" key="chaperones" value-ref="#[sessionVars.chaperones]" doc:name="Store to chaperones"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="students" value-ref="#[sessionVars.students]" doc:name="Store to students" overwrite="true"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="chaperones" value-ref="#[sessionVars.chaperones]" overwrite="true" doc:name="Store to chaperones"/>
     </sub-flow>
     <sub-flow name="SUBFLOW:CalculateGeoCoords">
         <http:request config-ref="GoogleGeoCoords" path="/json" method="GET" doc:name="Google Geocode API">
@@ -133,6 +252,10 @@ http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/
 %output application/json
 ---
 payload[0][0].geometry.location]]></dw:set-payload>
+            <dw:set-variable variableName="event_coords"><![CDATA[%dw 1.0
+%output application/json
+---
+payload[0][0].geometry.location]]></dw:set-variable>
             <dw:set-session-variable variableName="lat"><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -142,28 +265,30 @@ payload[0][0].geometry.location.lat]]></dw:set-session-variable>
 ---
 payload[0][0].geometry.location.lng]]></dw:set-session-variable>
         </dw:transform-message>
-        <objectstore:store config-ref="ObjectStore__Connector" key="eventLat" value-ref="#[sessionVars.lat]" doc:name="ObjectStore"/>
-        <objectstore:store config-ref="ObjectStore__Connector" key="eventLng" value-ref="#[sessionVars.lng]" doc:name="ObjectStore"/>
+        <logger message="Event Coords: #[flowVars.event_coords]" level="INFO" doc:name="Logger"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="eventCoords" value-ref="#[flowVars.event_coords]" overwrite="true" doc:name="Store eventCoords"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="eventLat" value-ref="#[sessionVars.lat]" doc:name="Store eventLat" overwrite="true"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="eventLng" value-ref="#[sessionVars.lng]" overwrite="true" doc:name="Store eventLng"/>
         <logger message="(#[sessionVars.lat], #[sessionVars.lng])" level="INFO" doc:name="Log Lat-Lng"/>
-    </sub-flow>
-    <sub-flow name="SetPrebuiltLocationTODORemove">
-        <set-session-variable variableName="location" value="{&quot;lat&quot;:32.7405294,&quot;lng&quot;:-96.81624099999999}" doc:name="Set location" mimeType="application/json"/>
     </sub-flow>
     <flow name="searchFood">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/food" allowedMethods="GET" doc:name="HTTP"/>
-        <flow-ref name="SetPrebuiltLocationTODORemove" doc:name="SetPrebuiltLocationTODORemove"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="eventLat" targetProperty="#[flowVars.lat]" doc:name="Retrieve EventLat"/>
+        <set-variable variableName="lat" value="#[payload]" doc:name="Store lat"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="eventLng" targetProperty="#[flowVars.lng]" doc:name="Retrieve EventLng"/>
+        <set-variable variableName="lng" value="#[payload]" doc:name="Store lng"/>
         <dw:transform-message doc:name="Transform Message">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
 {
-	"lat":sessionVars.location[0],
-	"lng":sessionVars.location[1]
+	"lat":flowVars.lat,
+	"lng":flowVars.lng
 }]]></dw:set-payload>
         </dw:transform-message>
-        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <logger message="Payload after transforming: #[payload]" level="INFO" doc:name="Logger"/>
         <http:request config-ref="Food_APIConnection" path="/search" method="POST" doc:name="Get Food Options"/>
-        <logger message="#[payload]" level="INFO" doc:name="Log Food Options"/>
+        <logger message="Payload after GetFoodOptions: #[payload]" level="INFO" doc:name="Log Food Options"/>
     </flow>
     <flow name="SetFood">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/food/{name}" allowedMethods="GET" doc:name="HTTP"/>
@@ -189,39 +314,29 @@ payload[0]]]></dw:set-variable>
 }]]></dw:set-variable>
         </dw:transform-message>
         <objectstore:store config-ref="ObjectStore__Connector" key="food_info" value-ref="#[flowVars.foodinfo]" doc:name="Store FoodInfo" overwrite="true"/>
+        <response>
+            <set-payload value="Food option has been set successfully!" doc:name="Set Payload"/>
+        </response>
+
+
     </flow>
     <flow name="GetVehicles">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/vehicle/optimize" doc:name="GetVehicles" allowedMethods="GET"/>
-        <objectstore:contains config-ref="ObjectStore__Connector" key="students" doc:name="ObjectStore"/>
+        <objectstore:contains config-ref="ObjectStore__Connector" key="students" doc:name="Check is students exists"/>
         <choice doc:name="Choice">
-            <when expression="#[payload == true]">
-                <objectstore:retrieve config-ref="ObjectStore__Connector" key="students" doc:name="Retrieve Students"/>
-                <set-variable variableName="students" value="#[payload]" doc:name="Set Student Count"/>
-                <objectstore:retrieve config-ref="ObjectStore__Connector" key="chaperones" doc:name="Retrieve Chaperones"/>
-                <set-variable variableName="chaperones" value="#[payload]" doc:name="Set Chaperones Count"/>
-                <dw:transform-message doc:name="Calculate Passengers">
-                    <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-{
-	plus: flowVars.students + flowVars.chaperones
-}]]></dw:set-payload>
-                    <dw:set-variable variableName="passengers"><![CDATA[%dw 1.0
-%output application/java
----
-{
-	plus: flowVars.students + flowVars.chaperones
-}]]></dw:set-variable>
-                </dw:transform-message>
+            <when expression="#[payload == 'true']">
+                <flow-ref name="CalculatePassengerCount" doc:name="Calculate Passengers"/>
+
             </when>
             <otherwise>
                 <set-variable variableName="passengers" value="105" doc:name="Set Passengers"/>
             </otherwise>
         </choice>
-        <logger message="#[flowVars.passengers]" level="INFO" doc:name="Logger"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
         <http:request config-ref="TransportationVehicle_APIConfiguration" path="/optimize" method="GET" doc:name="GetBuses">
             <http:request-builder>
-                <http:query-param paramName="passengers" value="#[flowVars.passengers]"/>
+                <http:query-param paramName="passengers" value="#[json:sum]"/>
+
             </http:request-builder>
         </http:request>
         <dw:transform-message doc:name="Transform Message">
@@ -237,52 +352,90 @@ payload]]></dw:set-variable>
         <logger message="#[payload]" level="INFO" doc:name="Logger"/>
         <objectstore:store config-ref="ObjectStore__Connector" key="vehicle_info" value-ref="#[flowVars.vehicle_info]" overwrite="true" doc:name="Store Vehicle Info"/>
     </flow>
+    <sub-flow name="CalculatePassengerCount">
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="students" doc:name="Retrieve Students"/>
+        <set-variable variableName="students" value="#[payload]" doc:name="Set Student Count"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="chaperones" doc:name="Retrieve Chaperones"/>
+        <set-variable variableName="chaperones" value="#[payload]" doc:name="Set Chaperone Count"/>
+        <dw:transform-message doc:name="Calculate Passengers">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	sum: flowVars.students + flowVars.chaperones
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="CalculateEventCost">
+        <http:request config-ref="Event_APIConnection" path="/estimate" method="POST" doc:name="Calculate Event Cost">
+            <http:request-builder>
+                <http:query-param paramName="student_count" value="#[sessionVars.students]"/>
+                <http:query-param paramName="adult_count" value="#[sessionVars.chaperones]"/>
+                <http:query-param paramName="fac_name" value="#[flowVars.eventName]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+}]]></dw:set-payload>
+            <dw:set-variable variableName="event_cost"><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <logger message="Event Cost: #[flowVars.event_cost]" level="INFO" doc:name="Log Event Cost"/>
+        <objectstore:store config-ref="ObjectStore__Connector" key="event_cost" value-ref="#[flowVars.event_cost]" doc:name="Store Event Cost" overwrite="true"/>
+    </sub-flow>
     <flow name="estimateTransportCost">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/getCost" allowedMethods="GET" doc:name="HTTP"/>
-        <objectstore:retrieve config-ref="ObjectStore__Connector" key="event_info" doc:name="Retrieve Event Info"/>
-        <dw:transform-message doc:name="Set Event Lat-Lng">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-{
-}]]></dw:set-payload>
-            <dw:set-variable variableName="event_lat"><![CDATA[%dw 1.0
-%output application/json
----
-payload[0][0].location.lat]]></dw:set-variable>
-            <dw:set-variable variableName="event_lng"><![CDATA[%dw 1.0
-%output application/json
----
-payload[0][0].location.lng]]></dw:set-variable>
-        </dw:transform-message>
-        <objectstore:retrieve config-ref="ObjectStore__Connector" key="food_info" doc:name="Retrieve Food Info"/>
-        <dw:transform-message doc:name="Set Food Lat-Lng">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-{
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/cost" allowedMethods="GET" doc:name="HTTP"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="eventLat" targetProperty="#[flowVars.lat]" doc:name="Retrieve EventLat"/>
+        <set-variable variableName="event_lat" value="#[payload]" doc:name="Set event_lat"/>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="eventLng" targetProperty="#[flowVars.lng]" doc:name="Retrieve EventLng"/>
+        <set-variable variableName="event_lng" value="#[payload]" doc:name="Set event_lng"/>
 
-}]]></dw:set-payload>
+        <objectstore:retrieve config-ref="ObjectStore__Connector" key="food_info" doc:name="Retrieve Food Info"/>
+        <dw:transform-message doc:name="Set food_lat and food_lng" metadata:id="44473bd9-ae2e-4519-8b07-c3efd7c567a5">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
             <dw:set-variable variableName="food_lat"><![CDATA[%dw 1.0
-%output application/json
+%output application/java
 ---
-payload[0].location.lat]]></dw:set-variable>
+payload.location.lat]]></dw:set-variable>
             <dw:set-variable variableName="food_lng"><![CDATA[%dw 1.0
-%output application/json
+%output application/java
 ---
-payload[0].location.lng]]></dw:set-variable>
+payload.location.lng]]></dw:set-variable>
         </dw:transform-message>
-        <http:request config-ref="TransportationVehicle_APIConfiguration" path="/estimate" method="TRACE" doc:name="Get Estimate Cost">
+
+        <http:request config-ref="TransportationVehicle_APIConfiguration" path="/estimate" method="GET" doc:name="Get Estimate Cost">
             <http:request-builder>
                 <http:query-param paramName="lat1" value="#[flowVars.food_lat]"/>
                 <http:query-param paramName="lng1" value="#[flowVars.food_lng]"/>
                 <http:query-param paramName="lat2" value="#[flowVars.event_lat]"/>
-                <http:query-param paramName="lng2" value="#[flowVars.food_lng]"/>
-                <http:query-param paramName="gasCost" value="3.25"/>
+                <http:query-param paramName="lng2" value="#[flowVars.event_lng]"/>
+                <http:query-param paramName="gascost" value="3.25"/>
+
             </http:request-builder>
         </http:request>
-        <set-variable variableName="transportation_cost" value="#[payload]" doc:name="Set Transportation Estimate"/>
-        <objectstore:store config-ref="ObjectStore__Connector" key="transportation_cost" value-ref="#[flowVars.transportation_cost]" doc:name="Store Transportation Cost"/>
+        <dw:transform-message doc:name="Set Transportation Cost">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+}]]></dw:set-payload>
+            <dw:set-variable variableName="transportation_cost"><![CDATA[%dw 1.0
+%output application/json
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <logger message="Transportation cost estimate: #[flowVars.transportation_cost]" level="INFO" doc:name="Logger"/>
+
+        <objectstore:store config-ref="ObjectStore__Connector" key="transportation_cost" value-ref="#[flowVars.transportation_cost]" doc:name="Store Transportation Cost" overwrite="true"/>
     </flow>
 
 </mule>

@@ -3,9 +3,9 @@
     "outputMessageMetadata": {
         "messagePayload": {
             "connectorName": "#_custom_mule_metadata_type_#",
-            "typeId": "facility"
+            "typeId": "passengers"
         }
     },
-    "id": "dbf22ee6-646d-4800-b443-74fd0211a107",
+    "id": "2447c3c1-b5c7-45c4-8499-86a0babfb7e7",
     "version": "5.2.0.0"
 }
